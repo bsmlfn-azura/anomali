@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SIMONDOC - Sistem Monitoring Dokumen OPD</title>
+    <title>SIMONDA - Sistem Monitoring Dokumen Anomali OPD</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
@@ -153,7 +153,7 @@
     <div class="loading-overlay" id="loadingOverlay">
         <div class="text-center">
             <div class="w-12 h-12 border-3 border-brand-500 border-t-transparent rounded-full animate-spin mx-auto mb-4" style="border-width:3px;"></div>
-            <p class="text-sm text-slate-400" id="loadingText">Memuat data dari Google Sheets...</p>
+            <p class="text-sm text-slate-400" id="loadingText">Memuat data...</p>
         </div>
     </div>
 
@@ -172,8 +172,8 @@
                     </div>
                 </div>
                 <div>
-                    <h1 class="font-display text-lg sm:text-xl font-bold tracking-tight text-white leading-tight">SIMONDOC</h1>
-                    <p class="text-[0.6rem] sm:text-[0.65rem] text-slate-500 font-medium tracking-wider uppercase leading-tight">Monitoring Dokumen OPD</p>
+                    <h1 class="font-display text-lg sm:text-xl font-bold tracking-tight text-white leading-tight">SIMONDA</h1>
+                    <p class="text-[0.6rem] sm:text-[0.65rem] text-slate-500 font-medium tracking-wider uppercase leading-tight">Monitoring Dokumen Anomali OPD</p>
                 </div>
             </div>
             <div class="flex items-center gap-3">
@@ -187,7 +187,7 @@
 
     <!-- ===================== NAVIGASI TAB ===================== -->
     <nav class="max-w-7xl mx-auto px-4 sm:px-6 pt-6 pb-2">
-        <div class="flex gap-2 overflow-x-auto pb-2" id="tab-nav">
+        <div class="flex gap-2 overflow-x-auto pb-2" id="nav-tabs">
             <button class="tab-btn active" onclick="switchTab('upload')">
                 <i class="fa-solid fa-cloud-arrow-up mr-2"></i>Upload Dokumen
             </button>
@@ -321,8 +321,8 @@
                             <li class="flex items-start gap-2"><i class="fa-solid fa-check text-brand-400 mt-0.5"></i> Pilih nama OPD dari daftar</li>
                             <li class="flex items-start gap-2"><i class="fa-solid fa-check text-brand-400 mt-0.5"></i> Masukkan NIP (18 digit)</li>
                             <li class="flex items-start gap-2"><i class="fa-solid fa-check text-brand-400 mt-0.5"></i> Upload dokumen Excel, PDF, atau JPG</li>
-                            <li class="flex items-start gap-2"><i class="fa-solid fa-check text-brand-400 mt-0.5"></i> NIP yang sudah terdaftar tidak dapat digunakan kembali</li>
-                            <li class="flex items-start gap-2"><i class="fa-solid fa-check text-brand-400 mt-0.5"></i> Data tersimpan langsung ke Google Sheets</li>
+                            <li class="flex items-start gap-2"><i class="fa-solid fa-check text-brand-400 mt-0.5"></i> NIP yang sudah pernah entri tidak dapat entri data kembali</li>
+                            <li class="flex items-start gap-2"><i class="fa-solid fa-check text-brand-400 mt-0.5"></i> Data tersimpan langsung ke server</li>
                         </ul>
                     </div>
                 </div>
@@ -405,7 +405,7 @@
 
     <!-- ===================== FOOTER ===================== -->
     <footer class="border-t border-surface-600 py-4 text-center text-xs text-slate-600">
-        <p>SIMONDOC &copy; 2025 &mdash; Sistem Monitoring Dokumen OPD</p>
+        <p>SIMONDA &copy; 2026 &mdash; Sistem Monitoring Dokumen Anomali OPD</p>
     </footer>
 
 <script>
@@ -630,10 +630,12 @@ function renderAll() {
 // NAVIGASI TAB
 // ===============================================================
 function switchTab(tabName) {
-    document.querySelectorAll('[id^="tab-"]').forEach(el => {
-        if (el.id.startsWith('tab-')) el.classList.add('hidden');
+    // Sembunyikan semua konten tab (hanya section, bukan nav)
+    document.querySelectorAll('section[id^="tab-"]').forEach(el => {
+        el.classList.add('hidden');
     });
 
+    // Tampilkan tab aktif
     const tabEl = document.getElementById('tab-' + tabName);
     if (tabEl) {
         tabEl.classList.remove('hidden');
@@ -642,7 +644,8 @@ function switchTab(tabName) {
         tabEl.classList.add('animate-fade-up');
     }
 
-    document.querySelectorAll('#tab-nav .tab-btn').forEach((btn, i) => {
+    // Update tombol navigasi
+    document.querySelectorAll('#nav-tabs .tab-btn').forEach((btn, i) => {
         const tabs = ['upload', 'monitoring'];
         btn.classList.toggle('active', tabs[i] === tabName);
     });
