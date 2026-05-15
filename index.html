@@ -30,7 +30,6 @@
         ::-webkit-scrollbar-thumb { background:#253D60; border-radius:3px; }
         ::-webkit-scrollbar-thumb:hover { background:#34D399; }
 
-        /* Background Pattern */
         .bg-grid {
             background-image:
                 radial-gradient(ellipse 80% 50% at 50% -20%, rgba(16,185,129,0.08), transparent),
@@ -39,7 +38,6 @@
             background-size: 100% 100%, 40px 40px, 40px 40px;
         }
 
-        /* Animasi */
         @keyframes fadeUp { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
         @keyframes slideIn { from { opacity:0; transform:translateX(-10px); } to { opacity:1; transform:translateX(0); } }
         @keyframes pulse-glow { 0%,100% { box-shadow:0 0 5px rgba(16,185,129,0.3); } 50% { box-shadow:0 0 20px rgba(16,185,129,0.5); } }
@@ -47,9 +45,10 @@
         @keyframes toast-in { from { transform:translateX(120%); opacity:0; } to { transform:translateX(0); opacity:1; } }
         @keyframes toast-out { from { transform:translateX(0); opacity:1; } to { transform:translateX(120%); opacity:0; } }
         @keyframes modal-in { from { opacity:0; transform:scale(0.9); } to { opacity:1; transform:scale(1); } }
-        @keyframes shimmer { 0% { background-position:-200% 0; } 100% { background-position:200% 0; } }
-        @keyframes count-up { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:translateY(0); } }
-        @keyframes spin-slow { from { transform:rotate(0deg); } to { transform:rotate(360deg); } }
+        @keyframes spin { from { transform:rotate(0deg); } to { transform:rotate(360deg); } }
+        @keyframes bar-grow { from { width:0; } }
+        @keyframes dot-pulse { 0%,100% { opacity:1; } 50% { opacity:0.4; } }
+        @keyframes ripple { 0% { transform:scale(0); opacity:0.5; } 100% { transform:scale(4); opacity:0; } }
 
         .animate-fade-up { animation: fadeUp 0.5s ease-out forwards; }
         .animate-slide-in { animation: slideIn 0.3s ease-out forwards; }
@@ -57,12 +56,12 @@
         .animate-toast-in { animation: toast-in 0.4s ease-out forwards; }
         .animate-toast-out { animation: toast-out 0.3s ease-in forwards; }
         .animate-modal-in { animation: modal-in 0.3s ease-out forwards; }
+        .animate-spin { animation: spin 1s linear infinite; }
+        .animate-bar-grow { animation: bar-grow 0.6s ease-out forwards; }
 
-        /* Glass Card */
         .glass { background:rgba(15,26,46,0.7); backdrop-filter:blur(12px); border:1px solid rgba(37,61,96,0.5); }
         .glass-light { background:rgba(21,34,56,0.5); backdrop-filter:blur(8px); border:1px solid rgba(37,61,96,0.3); }
 
-        /* Input Style */
         .input-field {
             background:#0B1120; border:1px solid #253D60; border-radius:10px; padding:12px 16px;
             color:#E2E8F0; font-size:0.95rem; transition:all 0.3s; width:100%; outline:none;
@@ -70,20 +69,16 @@
         .input-field:focus { border-color:#10B981; box-shadow:0 0 0 3px rgba(16,185,129,0.15); }
         .input-field::placeholder { color:#475569; }
         .input-field.error { border-color:#F43F5E; box-shadow:0 0 0 3px rgba(244,63,94,0.15); }
-        .input-field.valid { border-color:#10B981; }
+        .input-field.valid { border-color:#10B981; box-shadow:0 0 0 3px rgba(16,185,129,0.08); }
 
-        /* Upload Zone */
         .upload-zone {
             border:2px dashed #253D60; border-radius:14px; padding:40px 20px; text-align:center;
             transition:all 0.3s; cursor:pointer; position:relative; overflow:hidden;
         }
-        .upload-zone:hover, .upload-zone.drag-over {
-            border-color:#10B981; background:rgba(16,185,129,0.05);
-        }
+        .upload-zone:hover, .upload-zone.drag-over { border-color:#10B981; background:rgba(16,185,129,0.05); }
         .upload-zone.drag-over { animation: pulse-glow 1s infinite; }
         .upload-zone.has-file { border-color:#10B981; border-style:solid; background:rgba(16,185,129,0.05); }
 
-        /* Tab */
         .tab-btn {
             padding:12px 24px; font-weight:600; font-size:0.9rem; border-radius:10px;
             transition:all 0.3s; cursor:pointer; position:relative; white-space:nowrap;
@@ -92,7 +87,6 @@
         .tab-btn:not(.active) { color:#64748B; }
         .tab-btn:not(.active):hover { color:#94A3B8; background:rgba(255,255,255,0.03); }
 
-        /* Table */
         .data-table { width:100%; border-collapse:separate; border-spacing:0; }
         .data-table thead th {
             padding:14px 16px; text-align:left; font-size:0.75rem; font-weight:700;
@@ -101,115 +95,96 @@
         }
         .data-table tbody tr { transition:all 0.2s; }
         .data-table tbody tr:hover { background:rgba(16,185,129,0.04); }
-        .data-table tbody td {
-            padding:14px 16px; font-size:0.875rem; border-bottom:1px solid rgba(28,46,74,0.4);
-        }
+        .data-table tbody td { padding:14px 16px; font-size:0.875rem; border-bottom:1px solid rgba(28,46,74,0.4); }
 
-        /* Badge */
-        .badge {
-            display:inline-flex; align-items:center; gap:4px; padding:4px 10px; border-radius:6px;
-            font-size:0.75rem; font-weight:600; text-transform:uppercase;
-        }
+        .badge { display:inline-flex; align-items:center; gap:4px; padding:4px 10px; border-radius:6px; font-size:0.75rem; font-weight:600; text-transform:uppercase; }
         .badge-pdf { background:rgba(244,63,94,0.15); color:#FB7185; }
         .badge-excel { background:rgba(16,185,129,0.15); color:#34D399; }
         .badge-image { background:rgba(251,191,36,0.15); color:#FBBF24; }
         .badge-active { background:rgba(16,185,129,0.15); color:#34D399; }
-        .badge-warning { background:rgba(251,191,36,0.15); color:#FBBF24; }
 
-        /* Stat Card */
         .stat-card {
             background:linear-gradient(135deg, rgba(15,26,46,0.8), rgba(21,34,56,0.6));
             border:1px solid rgba(37,61,96,0.4); border-radius:16px; padding:20px;
             transition:all 0.3s; position:relative; overflow:hidden;
         }
-        .stat-card::before {
-            content:''; position:absolute; top:0; right:0; width:80px; height:80px;
-            border-radius:0 16px 0 40px; opacity:0.1;
-        }
         .stat-card:hover { transform:translateY(-2px); border-color:rgba(16,185,129,0.3); }
-        .stat-card .stat-icon {
-            width:44px; height:44px; border-radius:12px; display:flex; align-items:center;
-            justify-content:center; font-size:1.1rem; margin-bottom:12px;
-        }
+        .stat-card .stat-icon { width:44px; height:44px; border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:1.1rem; margin-bottom:12px; }
         .stat-card .stat-number { font-family:'Space Grotesk',sans-serif; font-size:1.8rem; font-weight:700; }
         .stat-card .stat-label { font-size:0.8rem; color:#64748B; margin-top:2px; }
 
-        /* Toast Container */
         #toast-container { position:fixed; top:20px; right:20px; z-index:9999; display:flex; flex-direction:column; gap:10px; }
-        .toast {
-            display:flex; align-items:center; gap:12px; padding:14px 20px; border-radius:12px;
-            min-width:320px; max-width:420px; box-shadow:0 10px 40px rgba(0,0,0,0.4);
-            font-size:0.875rem; font-weight:500; animation:toast-in 0.4s ease-out;
-        }
+        .toast { display:flex; align-items:center; gap:12px; padding:14px 20px; border-radius:12px; min-width:320px; max-width:420px; box-shadow:0 10px 40px rgba(0,0,0,0.4); font-size:0.875rem; font-weight:500; animation:toast-in 0.4s ease-out; }
         .toast-success { background:#065F46; border:1px solid #10B981; color:#D1FAE5; }
         .toast-error { background:#7F1D1D; border:1px solid #F43F5E; color:#FEE2E2; }
         .toast-warning { background:#78350F; border:1px solid #F59E0B; color:#FEF3C7; }
 
-        /* Modal */
-        .modal-overlay {
-            position:fixed; inset:0; z-index:9000; display:flex; align-items:center; justify-content:center;
-            background:rgba(0,0,0,0.7); backdrop-filter:blur(4px); opacity:0; pointer-events:none; transition:opacity 0.3s;
-        }
+        .modal-overlay { position:fixed; inset:0; z-index:9000; display:flex; align-items:center; justify-content:center; background:rgba(0,0,0,0.7); backdrop-filter:blur(4px); opacity:0; pointer-events:none; transition:opacity 0.3s; }
         .modal-overlay.show { opacity:1; pointer-events:auto; }
-        .modal-box {
-            background:#0F1A2E; border:1px solid #253D60; border-radius:20px; padding:32px;
-            max-width:480px; width:90%; animation:modal-in 0.3s ease-out;
-        }
+        .modal-box { background:#0F1A2E; border:1px solid #253D60; border-radius:20px; padding:32px; max-width:480px; width:90%; animation:modal-in 0.3s ease-out; }
 
-        /* Progress bar */
-        .progress-bar { height:6px; border-radius:3px; background:#1C2E4A; overflow:hidden; }
-        .progress-fill { height:100%; border-radius:3px; transition:width 0.8s ease; }
-
-        /* Opd bar chart */
         .opd-bar { height:28px; border-radius:6px; transition:width 0.6s ease; min-width:4px; }
 
-        /* Responsive */
+        .loading-overlay { position:fixed; inset:0; z-index:8500; background:rgba(7,13,26,0.85); backdrop-filter:blur(6px); display:flex; align-items:center; justify-content:center; opacity:0; pointer-events:none; transition:opacity 0.3s; }
+        .loading-overlay.show { opacity:1; pointer-events:auto; }
+
+        .btn-primary {
+            position:relative; overflow:hidden;
+            background:linear-gradient(135deg, #059669, #10B981);
+            transition:all 0.3s; box-shadow:0 4px 20px rgba(16,185,129,0.25);
+        }
+        .btn-primary:hover { box-shadow:0 6px 30px rgba(16,185,129,0.4); transform:translateY(-1px); }
+        .btn-primary:active { transform:translateY(0); }
+        .btn-primary .ripple-circle {
+            position:absolute; border-radius:50%; background:rgba(255,255,255,0.3);
+            animation:ripple 0.6s linear; pointer-events:none;
+        }
+
         @media(max-width:768px) {
             .stat-card .stat-number { font-size:1.4rem; }
             .tab-btn { padding:10px 16px; font-size:0.8rem; }
             .data-table tbody td, .data-table thead th { padding:10px 12px; font-size:0.8rem; }
         }
-
-        /* Shimmer loading */
-        .shimmer {
-            background: linear-gradient(90deg, transparent 0%, rgba(16,185,129,0.08) 50%, transparent 100%);
-            background-size: 200% 100%; animation: shimmer 1.5s infinite;
-        }
     </style>
 </head>
 <body class="bg-grid min-h-screen">
 
-    <!-- ===================== HEADER ===================== -->
-<header class="glass sticky top-0 z-50 border-b border-surface-600">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between">
-        <div class="flex items-center gap-3">
-            <!-- Logo SIMONDOC -->
-            <div class="flex-shrink-0">
-                <img
-                    src="https://z-cdn-media.chatglm.cn/files/b61b2fff-7e19-4e6a-8a61-ee332e9d0a29.png?auth_key=1878850857-ac5ae558a6c24667ade06dff83237bd3-0-d32abc528bc1989b1a2e6e6f0930e235"
-                    alt="Logo SIMONDOC"
-                    class="h-10 w-10 sm:h-11 sm:w-11 object-contain drop-shadow-lg"
-                    style="filter: drop-shadow(0 0 6px rgba(16,185,129,0.25));"
-                    onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
-                >
-                <!-- Fallback ikon jika logo gagal dimuat -->
-                <div class="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-gradient-to-br from-brand-500 to-brand-700 items-center justify-center shadow-lg shadow-brand-500/20 hidden">
-                    <i class="fa-solid fa-folder-open text-white text-sm"></i>
-                </div>
-            </div>
-            <div>
-                <h1 class="font-display text-lg sm:text-xl font-bold tracking-tight text-white leading-tight">SIMONDOC</h1>
-                <p class="text-[0.6rem] sm:text-[0.65rem] text-slate-500 font-medium tracking-wider uppercase leading-tight">Monitoring Dokumen OPD</p>
-            </div>
-        </div>
-        <div class="flex items-center gap-3">
-            <div id="connection-status" class="flex items-center gap-2 px-3 py-1.5 rounded-full glass-light text-xs">
-                <span class="w-2 h-2 rounded-full bg-amber-500 animate-pulse" id="conn-dot"></span>
-                <span id="conn-text" class="text-slate-400">Mode Lokal</span>
-            </div>
+    <!-- ===================== LOADING OVERLAY ===================== -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="text-center">
+            <div class="w-12 h-12 border-3 border-brand-500 border-t-transparent rounded-full animate-spin mx-auto mb-4" style="border-width:3px;"></div>
+            <p class="text-sm text-slate-400" id="loadingText">Memuat data dari Google Sheets...</p>
         </div>
     </div>
-</header>
+
+    <!-- ===================== HEADER ===================== -->
+    <header class="glass sticky top-0 z-50 border-b border-surface-600">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="flex-shrink-0">
+                    <img src="https://z-cdn-media.chatglm.cn/files/b61b2fff-7e19-4e6a-8a61-ee332e9d0a29.png?auth_key=1878850857-ac5ae558a6c24667ade06dff83237bd3-0-d32abc528bc1989b1a2e6e6f0930e235"
+                         alt="Logo SIMONDOC"
+                         class="h-10 w-10 sm:h-11 sm:w-11 object-contain"
+                         style="filter:drop-shadow(0 0 6px rgba(16,185,129,0.25));"
+                         onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                    <div class="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-gradient-to-br from-brand-500 to-brand-700 items-center justify-center shadow-lg shadow-brand-500/20 hidden">
+                        <i class="fa-solid fa-folder-open text-white text-sm"></i>
+                    </div>
+                </div>
+                <div>
+                    <h1 class="font-display text-lg sm:text-xl font-bold tracking-tight text-white leading-tight">SIMONDOC</h1>
+                    <p class="text-[0.6rem] sm:text-[0.65rem] text-slate-500 font-medium tracking-wider uppercase leading-tight">Monitoring Dokumen OPD</p>
+                </div>
+            </div>
+            <div class="flex items-center gap-3">
+                <div id="connection-status" class="flex items-center gap-2 px-3 py-1.5 rounded-full glass-light text-xs">
+                    <span class="w-2 h-2 rounded-full bg-brand-400" style="animation:dot-pulse 2s infinite;"></span>
+                    <span class="text-brand-400">Terhubung</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
     <!-- ===================== NAVIGASI TAB ===================== -->
     <nav class="max-w-7xl mx-auto px-4 sm:px-6 pt-6 pb-2">
         <div class="flex gap-2 overflow-x-auto pb-2" id="tab-nav">
@@ -218,9 +193,6 @@
             </button>
             <button class="tab-btn" onclick="switchTab('monitoring')">
                 <i class="fa-solid fa-chart-line mr-2"></i>Monitoring OPD
-            </button>
-            <button class="tab-btn" onclick="switchTab('pengaturan')">
-                <i class="fa-solid fa-gear mr-2"></i>Pengaturan
             </button>
         </div>
     </nav>
@@ -250,7 +222,6 @@
                                 <select id="inputOpd" class="input-field" required>
                                     <option value="">-- Pilih OPD --</option>
                                 </select>
-                                <p class="text-xs text-slate-500 mt-1.5" id="opd-hint"></p>
                             </div>
 
                             <!-- NIP -->
@@ -259,7 +230,7 @@
                                     <i class="fa-solid fa-id-card mr-1 text-brand-400"></i> NIP
                                 </label>
                                 <div class="relative">
-                                    <input type="text" id="inputNip" class="input-field pr-10" placeholder="Masukkan 18 digit NIP" maxlength="18" required>
+                                    <input type="text" id="inputNip" class="input-field pr-10" placeholder="Masukkan 18 digit NIP" maxlength="18" required autocomplete="off">
                                     <span id="nip-status-icon" class="absolute right-3 top-1/2 -translate-y-1/2 text-sm hidden"></span>
                                 </div>
                                 <p class="text-xs mt-1.5" id="nip-hint"><span class="text-slate-500">Format: 18 digit angka</span></p>
@@ -300,7 +271,7 @@
                             </div>
 
                             <!-- Tombol Submit -->
-                            <button type="button" id="btnSubmit" onclick="handleSubmit()" class="w-full py-3.5 rounded-xl font-bold text-white bg-gradient-to-r from-brand-600 to-brand-500 hover:from-brand-500 hover:to-brand-400 transition-all shadow-lg shadow-brand-500/20 hover:shadow-brand-500/40 flex items-center justify-center gap-2">
+                            <button type="button" id="btnSubmit" onclick="handleSubmit()" class="btn-primary w-full py-3.5 rounded-xl font-bold text-white flex items-center justify-center gap-2">
                                 <i class="fa-solid fa-paper-plane"></i>
                                 <span id="btnText">Kirim Dokumen</span>
                             </button>
@@ -310,41 +281,38 @@
 
                 <!-- Info Panel -->
                 <div class="lg:col-span-2 space-y-4 mt-4 lg:mt-0">
-                    <!-- Statistik Singkat -->
                     <div class="grid grid-cols-2 gap-4">
                         <div class="stat-card">
                             <div class="stat-icon bg-brand-500/15 text-brand-400"><i class="fa-solid fa-file-arrow-up"></i></div>
-                            <div class="stat-number text-white" id="stat-total">0</div>
+                            <div class="stat-number text-white" id="stat-total">-</div>
                             <div class="stat-label">Total Upload</div>
                         </div>
                         <div class="stat-card">
                             <div class="stat-icon bg-amber-500/15 text-amber-400"><i class="fa-solid fa-building"></i></div>
-                            <div class="stat-number text-white" id="stat-opd">0</div>
+                            <div class="stat-number text-white" id="stat-opd">-</div>
                             <div class="stat-label">OPD Aktif</div>
                         </div>
                         <div class="stat-card">
                             <div class="stat-icon bg-rose-500/15 text-rose-400"><i class="fa-solid fa-file-pdf"></i></div>
-                            <div class="stat-number text-white" id="stat-pdf">0</div>
+                            <div class="stat-number text-white" id="stat-pdf">-</div>
                             <div class="stat-label">File PDF</div>
                         </div>
                         <div class="stat-card">
                             <div class="stat-icon bg-sky-500/15 text-sky-400"><i class="fa-solid fa-file-excel"></i></div>
-                            <div class="stat-number text-white" id="stat-excel">0</div>
+                            <div class="stat-number text-white" id="stat-excel">-</div>
                             <div class="stat-label">File Excel</div>
                         </div>
                     </div>
 
-                    <!-- Upload Terakhir -->
                     <div class="glass rounded-2xl p-5">
                         <h3 class="text-sm font-bold text-slate-300 mb-3 flex items-center gap-2">
                             <i class="fa-solid fa-clock-rotate-left text-brand-400"></i> Upload Terakhir
                         </h3>
                         <div id="recent-uploads" class="space-y-3">
-                            <p class="text-xs text-slate-500 text-center py-4">Belum ada data upload</p>
+                            <p class="text-xs text-slate-500 text-center py-4">Memuat data...</p>
                         </div>
                     </div>
 
-                    <!-- Panduan -->
                     <div class="glass rounded-2xl p-5">
                         <h3 class="text-sm font-bold text-slate-300 mb-3 flex items-center gap-2">
                             <i class="fa-solid fa-circle-info text-amber-400"></i> Panduan
@@ -352,9 +320,9 @@
                         <ul class="space-y-2 text-xs text-slate-400">
                             <li class="flex items-start gap-2"><i class="fa-solid fa-check text-brand-400 mt-0.5"></i> Pilih nama OPD dari daftar</li>
                             <li class="flex items-start gap-2"><i class="fa-solid fa-check text-brand-400 mt-0.5"></i> Masukkan NIP (18 digit)</li>
-                            <li class="flex items-start gap-2"><i class="fa-solid fa-check text-brand-400 mt-0.5"></i> Upload dokumen dalam format Excel, PDF, atau JPG</li>
+                            <li class="flex items-start gap-2"><i class="fa-solid fa-check text-brand-400 mt-0.5"></i> Upload dokumen Excel, PDF, atau JPG</li>
                             <li class="flex items-start gap-2"><i class="fa-solid fa-check text-brand-400 mt-0.5"></i> NIP yang sudah terdaftar tidak dapat digunakan kembali</li>
-                            <li class="flex items-start gap-2"><i class="fa-solid fa-check text-brand-400 mt-0.5"></i> Ukuran file maksimal 5MB</li>
+                            <li class="flex items-start gap-2"><i class="fa-solid fa-check text-brand-400 mt-0.5"></i> Data tersimpan langsung ke Google Sheets</li>
                         </ul>
                     </div>
                 </div>
@@ -375,15 +343,15 @@
                     <div class="flex items-center gap-3 w-full sm:w-auto">
                         <div class="relative flex-1 sm:flex-none">
                             <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 text-sm"></i>
-                            <input type="text" id="searchInput" oninput="filterTable()" placeholder="Cari OPD atau NIP..." class="input-field pl-10 py-2.5 text-sm" style="min-width:220px;">
+                            <input type="text" id="searchInput" oninput="renderTable()" placeholder="Cari OPD atau NIP..." class="input-field pl-10 py-2.5 text-sm" style="min-width:220px;">
                         </div>
-                        <select id="filterType" onchange="filterTable()" class="input-field py-2.5 text-sm" style="width:auto;">
+                        <select id="filterType" onchange="renderTable()" class="input-field py-2.5 text-sm" style="width:auto;">
                             <option value="">Semua Tipe</option>
                             <option value="pdf">PDF</option>
                             <option value="excel">Excel</option>
                             <option value="image">Gambar</option>
                         </select>
-                        <button onclick="refreshData()" class="w-10 h-10 rounded-xl glass-light flex items-center justify-center text-slate-400 hover:text-brand-400 transition" title="Refresh Data">
+                        <button onclick="fetchSheetData()" class="w-10 h-10 rounded-xl glass-light flex items-center justify-center text-slate-400 hover:text-brand-400 transition" title="Refresh Data">
                             <i class="fa-solid fa-arrows-rotate"></i>
                         </button>
                     </div>
@@ -395,7 +363,7 @@
                         <i class="fa-solid fa-chart-bar text-brand-400"></i> Rekap Upload per OPD
                     </h3>
                     <div id="opd-bars" class="space-y-3">
-                        <p class="text-xs text-slate-500 text-center py-4">Belum ada data</p>
+                        <p class="text-xs text-slate-500 text-center py-4">Memuat data...</p>
                     </div>
                 </div>
 
@@ -416,84 +384,23 @@
                                 </tr>
                             </thead>
                             <tbody id="tableBody">
-                                <tr><td colspan="8" class="text-center text-slate-500 py-12"><i class="fa-solid fa-inbox text-3xl mb-3 block text-slate-600"></i>Belum ada data upload</td></tr>
+                                <tr><td colspan="8" class="text-center text-slate-500 py-12">Memuat data...</td></tr>
                             </tbody>
                         </table>
                     </div>
                 </div>
             </div>
         </section>
-
-        <!-- ===== TAB: PENGATURAN ===== -->
-        <section id="tab-pengaturan" class="hidden animate-fade-up">
-            <div class="mt-4 max-w-2xl">
-                <div class="glass rounded-2xl p-6 sm:p-8">
-                    <div class="flex items-center gap-3 mb-6">
-                        <div class="w-8 h-8 rounded-lg bg-amber-500/15 flex items-center justify-center">
-                            <i class="fa-solid fa-gear text-amber-400 text-sm"></i>
-                        </div>
-                        <h2 class="font-display text-xl font-bold text-white">Pengaturan Google Sheets</h2>
-                    </div>
-
-                    <div class="mb-5">
-                        <label class="block text-sm font-semibold text-slate-300 mb-2">URL Google Apps Script</label>
-                        <input type="url" id="appsScriptUrl" class="input-field" placeholder="https://script.google.com/macros/s/xxxxx/exec">
-                        <p class="text-xs text-slate-500 mt-1.5">Masukkan URL deployment dari Google Apps Script Anda</p>
-                    </div>
-
-                    <div class="flex gap-3 mb-8">
-                        <button onclick="saveSettings()" class="px-5 py-2.5 rounded-xl font-semibold text-white bg-brand-600 hover:bg-brand-500 transition text-sm">
-                            <i class="fa-solid fa-floppy-disk mr-1"></i> Simpan Pengaturan
-                        </button>
-                        <button onclick="testConnection()" class="px-5 py-2.5 rounded-xl font-semibold text-slate-300 glass-light hover:border-brand-500 transition text-sm">
-                            <i class="fa-solid fa-plug mr-1"></i> Test Koneksi
-                        </button>
-                    </div>
-
-                    <!-- Instruksi Setup -->
-                    <div class="bg-surface-900 rounded-xl p-5 border border-surface-600">
-                        <h3 class="text-sm font-bold text-amber-400 mb-3 flex items-center gap-2">
-                            <i class="fa-solid fa-book-open"></i> Panduan Setup Google Sheets
-                        </h3>
-                        <ol class="space-y-3 text-xs text-slate-400 list-decimal list-inside">
-                            <li>Buat Google Spreadsheet baru di <a href="https://sheets.google.com" target="_blank" class="text-brand-400 underline">sheets.google.com</a></li>
-                            <li>Buat sheet dengan nama <code class="bg-surface-700 px-1.5 py-0.5 rounded text-brand-300">Data Upload</code></li>
-                            <li>Buat header di baris 1: <code class="bg-surface-700 px-1.5 py-0.5 rounded text-brand-300">Tanggal | Nama OPD | NIP | Nama File | Tipe File | URL File | Status</code></li>
-                            <li>Buat folder di Google Drive untuk menyimpan file upload</li>
-                            <li>Buka <strong>Extensions > Apps Script</strong> di spreadsheet</li>
-                            <li>Copy-paste kode Apps Script dari bawah halaman ini</li>
-                            <li>Ganti <code class="bg-surface-700 px-1.5 py-0.5 rounded text-amber-300">SHEET_ID</code> dan <code class="bg-surface-700 px-1.5 py-0.5 rounded text-amber-300">FOLDER_ID</code> dengan ID Anda</li>
-                            <li>Klik <strong>Deploy > New deployment</strong>, pilih tipe <strong>Web app</strong></li>
-                            <li>Set "Who has access" ke <strong>Anyone</strong>, lalu Deploy</li>
-                            <li>Copy URL deployment dan paste di atas</li>
-                        </ol>
-                    </div>
-
-                    <!-- Kode Apps Script -->
-                    <div class="mt-6">
-                        <div class="flex items-center justify-between mb-3">
-                            <h3 class="text-sm font-bold text-slate-300 flex items-center gap-2">
-                                <i class="fa-solid fa-code text-brand-400"></i> Kode Google Apps Script
-                            </h3>
-                            <button onclick="copyScriptCode()" class="px-3 py-1.5 rounded-lg glass-light text-xs text-slate-400 hover:text-brand-400 transition">
-                                <i class="fa-solid fa-copy mr-1"></i> Copy
-                            </button>
-                        </div>
-                        <pre id="scriptCode" class="bg-surface-950 rounded-xl p-4 text-xs text-slate-300 overflow-x-auto border border-surface-600 leading-relaxed" style="max-height:400px;overflow-y:auto;"></pre>
-                    </div>
-                </div>
-            </div>
-        </section>
     </main>
 
-    <!-- ===================== MODAL OVERLAY ===================== -->
+    <!-- ===================== MODAL ===================== -->
     <div class="modal-overlay" id="modalOverlay" onclick="closeModal(event)">
         <div class="modal-box" id="modalBox">
             <div id="modalContent"></div>
         </div>
     </div>
 
-    <!-- ===================== TOAST CONTAINER ===================== -->
+    <!-- ===================== TOAST ===================== -->
     <div id="toast-container"></div>
 
     <!-- ===================== FOOTER ===================== -->
@@ -501,17 +408,17 @@
         <p>SIMONDOC &copy; 2025 &mdash; Sistem Monitoring Dokumen OPD</p>
     </footer>
 
-
 <script>
-// ===============================================================
-// KONFIGURASI & STATE
-// ===============================================================
-const APP_KEY = 'simondoc_';
-const DATA_KEY = APP_KEY + 'data';
-const SETTINGS_KEY = APP_KEY + 'settings';
+// =============================================================
+// KONFIGURASI BACKEND
+// =============================================================
+// URL Google Apps Script — GANTI DENGAN URL DEPLOYMENT ANDA
+// Cara: Deploy > Web App > Copy URL, paste di bawah ini
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzutZIwEY-IRu4e1LiY8sv3PMPTlQELhDEntojfN20IwirHGC8gsSj82RghNTJxzlJ-/exec';
+// =============================================================
+
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 
-// Daftar OPD
 const OPD_LIST = [
     'Dinas Pendidikan dan Kebudayaan',
     'Dinas Kesehatan',
@@ -542,13 +449,13 @@ const OPD_LIST = [
     'Kecamatan Tilongkabila'
 ];
 
-let appData = [];
-let settings = { appsScriptUrl: '' };
+let sheetData = [];
 let selectedFile = null;
 let selectedFileBase64 = null;
+let nipChecking = false;
 
 // ===============================================================
-// KODE GOOGLE APPS SCRIPT (untuk ditampilkan di tab Pengaturan)
+// KODE GOOGLE APPS SCRIPT (untuk referensi admin)
 // ===============================================================
 const APPS_SCRIPT_CODE = `// =============================================
 // GOOGLE APPS SCRIPT - Code.gs
@@ -556,9 +463,9 @@ const APPS_SCRIPT_CODE = `// =============================================
 // Paste kode ini di Extensions > Apps Script
 // pada Google Spreadsheet Anda
 
-const SHEET_ID = 'GANTI_DENGAN_SPREADSHEET_ID'; // ID dari URL spreadsheet
+const SHEET_ID = 'GANTI_DENGAN_SPREADSHEET_ID';
 const SHEET_NAME = 'Data Upload';
-const FOLDER_ID = 'GANTI_DENGAN_FOLDER_ID'; // ID folder Google Drive
+const FOLDER_ID = 'GANTI_DENGAN_FOLDER_ID';
 
 function doPost(e) {
   try {
@@ -567,20 +474,15 @@ function doPost(e) {
     if (data.action === 'submit') {
       const ss = SpreadsheetApp.openById(SHEET_ID);
       const sheet = ss.getSheetByName(SHEET_NAME);
-
-      // Cek NIP duplikat
       const allData = sheet.getDataRange().getValues();
       const nipExists = allData.some((row, i) => i > 0 && row[2] && row[2].toString() === data.nip);
 
       if (nipExists) {
         return ContentService.createTextOutput(JSON.stringify({
-          success: false,
-          message: 'NIP sudah terdaftar',
-          duplicate: true
+          success: false, message: 'NIP sudah terdaftar', duplicate: true
         })).setMimeType(ContentService.MimeType.JSON);
       }
 
-      // Upload file ke Google Drive
       let fileUrl = '';
       if (data.fileBase64 && data.fileName) {
         try {
@@ -594,20 +496,14 @@ function doPost(e) {
         }
       }
 
-      // Simpan ke spreadsheet
       sheet.appendRow([
-        new Date(),
-        data.namaOpd,
-        data.nip,
-        data.fileName || '-',
-        data.fileType || '-',
-        fileUrl,
-        'Terverifikasi'
+        new Date(), data.namaOpd, data.nip,
+        data.fileName || '-', data.fileType || '-',
+        fileUrl, 'Terverifikasi'
       ]);
 
       return ContentService.createTextOutput(JSON.stringify({
-        success: true,
-        message: 'Data berhasil disimpan'
+        success: true, message: 'Data berhasil disimpan'
       })).setMimeType(ContentService.MimeType.JSON);
     }
 
@@ -615,17 +511,42 @@ function doPost(e) {
       const ss = SpreadsheetApp.openById(SHEET_ID);
       const sheet = ss.getSheetByName(SHEET_NAME);
       const allData = sheet.getDataRange().getValues();
-      const nipExists = allData.some((row, i) => i > 0 && row[2] && row[2].toString() === data.nip);
+      let existingOpd = '';
+      const nipExists = allData.some((row, i) => {
+        if (i > 0 && row[2] && row[2].toString() === data.nip) {
+          existingOpd = row[1] || '';
+          return true;
+        }
+        return false;
+      });
 
       return ContentService.createTextOutput(JSON.stringify({
-        exists: nipExists
+        exists: nipExists, namaOpd: existingOpd
+      })).setMimeType(ContentService.MimeType.JSON);
+    }
+
+    if (data.action === 'delete') {
+      const ss = SpreadsheetApp.openById(SHEET_ID);
+      const sheet = ss.getSheetByName(SHEET_NAME);
+      const allData = sheet.getDataRange().getValues();
+
+      for (let i = allData.length - 1; i > 0; i--) {
+        if (allData[i][2] && allData[i][2].toString() === data.nip) {
+          sheet.deleteRow(i + 1);
+          return ContentService.createTextOutput(JSON.stringify({
+            success: true, message: 'Data berhasil dihapus'
+          })).setMimeType(ContentService.MimeType.JSON);
+        }
+      }
+
+      return ContentService.createTextOutput(JSON.stringify({
+        success: false, message: 'Data tidak ditemukan'
       })).setMimeType(ContentService.MimeType.JSON);
     }
 
   } catch (error) {
     return ContentService.createTextOutput(JSON.stringify({
-      success: false,
-      message: error.toString()
+      success: false, message: error.toString()
     })).setMimeType(ContentService.MimeType.JSON);
   }
 }
@@ -635,14 +556,19 @@ function doGet(e) {
     const ss = SpreadsheetApp.openById(SHEET_ID);
     const sheet = ss.getSheetByName(SHEET_NAME);
     const allData = sheet.getDataRange().getValues();
-    const headers = allData.shift();
 
+    if (allData.length <= 1) {
+      return ContentService.createTextOutput(JSON.stringify([]))
+        .setMimeType(ContentService.MimeType.JSON);
+    }
+
+    allData.shift();
     const result = allData.filter(row => row[0]).map(row => ({
-      tanggal: row[0] ? new Date(row[0]).toLocaleDateString('id-ID', { day:'2-digit', month:'short', year:'numeric', hour:'2-digit', minute:'2-digit' }) : '',
+      tanggal: row[0] ? new Date(row[0]).toISOString() : '',
       namaOpd: row[1] || '',
       nip: row[2] ? row[2].toString() : '',
       fileName: row[3] || '',
-      fileType: row[4] || '',
+      fileType: row[4] ? row[4].toLowerCase() : '',
       fileUrl: row[5] || '',
       status: row[6] || ''
     }));
@@ -656,49 +582,79 @@ function doGet(e) {
 }`;
 
 // ===============================================================
-// INISIALISASI
+// INISIALISASI — langsung ke aplikasi
 // ===============================================================
 document.addEventListener('DOMContentLoaded', () => {
-    loadData();
-    loadSettings();
     populateOpdSelect();
     setupDragDrop();
     setupNipValidation();
-    renderStats();
-    renderRecentUploads();
-    displayScriptCode();
+    fetchSheetData(); // Langsung ambil data dari Google Sheets
 });
 
-// Memuat data dari localStorage
-function loadData() {
-    try {
-        const stored = localStorage.getItem(DATA_KEY);
-        appData = stored ? JSON.parse(stored) : [];
-    } catch (e) {
-        appData = [];
-    }
-}
+// ===============================================================
+// FETCH DATA DARI GOOGLE SHEETS
+// ===============================================================
+function fetchSheetData() {
+    showLoading('Memuat data dari Google Sheets...');
 
-// Simpan data ke localStorage
-function saveData() {
-    localStorage.setItem(DATA_KEY, JSON.stringify(appData));
-}
-
-// Muat pengaturan
-function loadSettings() {
-    try {
-        const stored = localStorage.getItem(SETTINGS_KEY);
-        if (stored) {
-            settings = JSON.parse(stored);
-            document.getElementById('appsScriptUrl').value = settings.appsScriptUrl || '';
-            updateConnectionStatus();
+    fetch(APPS_SCRIPT_URL)
+    .then(r => r.json())
+    .then(res => {
+        hideLoading();
+        if (res.error) {
+            showToast('Error dari Spreadsheet: ' + res.error, 'error');
+            sheetData = [];
+        } else if (Array.isArray(res)) {
+            sheetData = res;
+        } else {
+            sheetData = [];
         }
-    } catch (e) {
-        settings = { appsScriptUrl: '' };
+        renderAll();
+    })
+    .catch(err => {
+        hideLoading();
+        showToast('Gagal memuat data. Periksa koneksi internet atau konfigurasi APPS_SCRIPT_URL.', 'error');
+        sheetData = [];
+        renderAll();
+    });
+}
+
+function renderAll() {
+    renderStats();
+    renderRecentUploads();
+    renderTable();
+    renderOpdChart();
+}
+
+// ===============================================================
+// NAVIGASI TAB
+// ===============================================================
+function switchTab(tabName) {
+    document.querySelectorAll('[id^="tab-"]').forEach(el => {
+        if (el.id.startsWith('tab-')) el.classList.add('hidden');
+    });
+
+    const tabEl = document.getElementById('tab-' + tabName);
+    if (tabEl) {
+        tabEl.classList.remove('hidden');
+        tabEl.classList.remove('animate-fade-up');
+        void tabEl.offsetWidth;
+        tabEl.classList.add('animate-fade-up');
+    }
+
+    document.querySelectorAll('#tab-nav .tab-btn').forEach((btn, i) => {
+        const tabs = ['upload', 'monitoring'];
+        btn.classList.toggle('active', tabs[i] === tabName);
+    });
+
+    if (tabName === 'monitoring') {
+        fetchSheetData();
     }
 }
 
-// Isi dropdown OPD
+// ===============================================================
+// POPULATE OPD
+// ===============================================================
 function populateOpdSelect() {
     const select = document.getElementById('inputOpd');
     OPD_LIST.forEach(opd => {
@@ -710,100 +666,28 @@ function populateOpdSelect() {
 }
 
 // ===============================================================
-// NAVIGASI TAB
-// ===============================================================
-function switchTab(tabName) {
-    // Sembunyikan semua tab
-    document.querySelectorAll('[id^="tab-"]').forEach(el => {
-        if (el.id.startsWith('tab-')) el.classList.add('hidden');
-    });
-
-    // Tampilkan tab aktif
-    const tabEl = document.getElementById('tab-' + tabName);
-    if (tabEl) {
-        tabEl.classList.remove('hidden');
-        tabEl.classList.remove('animate-fade-up');
-        void tabEl.offsetWidth; // reflow
-        tabEl.classList.add('animate-fade-up');
-    }
-
-    // Update tombol navigasi
-    document.querySelectorAll('#tab-nav .tab-btn').forEach((btn, i) => {
-        const tabs = ['upload', 'monitoring', 'pengaturan'];
-        btn.classList.toggle('active', tabs[i] === tabName);
-    });
-
-    // Render data saat tab monitoring dibuka
-    if (tabName === 'monitoring') {
-        refreshData();
-    }
-}
-
-// ===============================================================
-// DRAG & DROP FILE
+// DRAG & DROP
 // ===============================================================
 function setupDragDrop() {
     const zone = document.getElementById('uploadZone');
-
-    zone.addEventListener('dragover', e => {
-        e.preventDefault();
-        zone.classList.add('drag-over');
-    });
-
-    zone.addEventListener('dragleave', e => {
-        e.preventDefault();
-        zone.classList.remove('drag-over');
-    });
-
-    zone.addEventListener('drop', e => {
-        e.preventDefault();
-        zone.classList.remove('drag-over');
-        if (e.dataTransfer.files.length) {
-            handleFileSelect(e.dataTransfer.files[0]);
-        }
-    });
-
-    document.getElementById('inputFile').addEventListener('change', e => {
-        if (e.target.files.length) {
-            handleFileSelect(e.target.files[0]);
-        }
-    });
+    zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('drag-over'); });
+    zone.addEventListener('dragleave', e => { e.preventDefault(); zone.classList.remove('drag-over'); });
+    zone.addEventListener('drop', e => { e.preventDefault(); zone.classList.remove('drag-over'); if (e.dataTransfer.files.length) handleFileSelect(e.dataTransfer.files[0]); });
+    document.getElementById('inputFile').addEventListener('change', e => { if (e.target.files.length) handleFileSelect(e.target.files[0]); });
 }
 
-// Proses file yang dipilih
 function handleFileSelect(file) {
-    const allowed = [
-        'application/pdf',
-        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-        'application/vnd.ms-excel',
-        'image/jpeg',
-        'image/png'
-    ];
     const allowedExt = ['.pdf', '.xlsx', '.xls', '.jpg', '.jpeg', '.png'];
-
     const ext = '.' + file.name.split('.').pop().toLowerCase();
-    if (!allowedExt.includes(ext)) {
-        showToast('Format file tidak didukung. Gunakan Excel, PDF, atau JPG/PNG.', 'error');
-        return;
-    }
-
-    if (file.size > MAX_FILE_SIZE) {
-        showToast('Ukuran file melebihi batas 5MB.', 'error');
-        return;
-    }
+    if (!allowedExt.includes(ext)) { showToast('Format file tidak didukung. Gunakan Excel, PDF, atau JPG/PNG.', 'error'); return; }
+    if (file.size > MAX_FILE_SIZE) { showToast('Ukuran file melebihi batas 5MB.', 'error'); return; }
 
     selectedFile = file;
-
-    // Baca file sebagai base64
     const reader = new FileReader();
-    reader.onload = () => {
-        selectedFileBase64 = reader.result.split(',')[1]; // Ambil bagian base64 saja
-    };
+    reader.onload = () => { selectedFileBase64 = reader.result.split(',')[1]; };
     reader.readAsDataURL(file);
 
-    // Tampilkan preview
-    const zone = document.getElementById('uploadZone');
-    zone.classList.add('has-file');
+    document.getElementById('uploadZone').classList.add('has-file');
     document.getElementById('uploadPlaceholder').classList.add('hidden');
     document.getElementById('uploadPreview').classList.remove('hidden');
     document.getElementById('fileName').textContent = file.name;
@@ -811,19 +695,11 @@ function handleFileSelect(file) {
 
     const fileIcon = document.getElementById('fileIcon');
     const fType = getFileCategory(ext);
-    if (fType === 'pdf') {
-        fileIcon.className = 'w-12 h-12 rounded-xl flex items-center justify-center text-xl bg-rose-500/15 text-rose-400';
-        fileIcon.innerHTML = '<i class="fa-solid fa-file-pdf"></i>';
-    } else if (fType === 'excel') {
-        fileIcon.className = 'w-12 h-12 rounded-xl flex items-center justify-center text-xl bg-brand-500/15 text-brand-400';
-        fileIcon.innerHTML = '<i class="fa-solid fa-file-excel"></i>';
-    } else {
-        fileIcon.className = 'w-12 h-12 rounded-xl flex items-center justify-center text-xl bg-amber-500/15 text-amber-400';
-        fileIcon.innerHTML = '<i class="fa-solid fa-file-image"></i>';
-    }
+    if (fType === 'pdf') { fileIcon.className = 'w-12 h-12 rounded-xl flex items-center justify-center text-xl bg-rose-500/15 text-rose-400'; fileIcon.innerHTML = '<i class="fa-solid fa-file-pdf"></i>'; }
+    else if (fType === 'excel') { fileIcon.className = 'w-12 h-12 rounded-xl flex items-center justify-center text-xl bg-brand-500/15 text-brand-400'; fileIcon.innerHTML = '<i class="fa-solid fa-file-excel"></i>'; }
+    else { fileIcon.className = 'w-12 h-12 rounded-xl flex items-center justify-center text-xl bg-amber-500/15 text-amber-400'; fileIcon.innerHTML = '<i class="fa-solid fa-file-image"></i>'; }
 }
 
-// Hapus file
 function removeFile() {
     selectedFile = null;
     selectedFileBase64 = null;
@@ -834,12 +710,11 @@ function removeFile() {
 }
 
 // ===============================================================
-// VALIDASI NIP
+// VALIDASI NIP — CEK KE GOOGLE SHEETS
 // ===============================================================
 function setupNipValidation() {
     const nipInput = document.getElementById('inputNip');
 
-    // Hanya izinkan angka
     nipInput.addEventListener('input', () => {
         nipInput.value = nipInput.value.replace(/[^0-9]/g, '');
         const icon = document.getElementById('nip-status-icon');
@@ -848,30 +723,25 @@ function setupNipValidation() {
         document.getElementById('nip-hint').innerHTML = '<span class="text-slate-500">Format: 18 digit angka</span>';
     });
 
-    // Cek saat blur
     nipInput.addEventListener('blur', () => {
         const nip = nipInput.value.trim();
         if (nip.length === 0) return;
-
         if (nip.length !== 18) {
             nipInput.classList.add('error');
             document.getElementById('nip-hint').innerHTML = '<span class="text-rose-400">NIP harus 18 digit</span>';
             return;
         }
-
-        // Cek duplikat
-        checkNipDuplicate(nip);
+        checkNipOnServer(nip);
     });
 }
 
-// Cek NIP duplikat
-function checkNipDuplicate(nip) {
+function checkNipOnServer(nip) {
     const nipInput = document.getElementById('inputNip');
     const icon = document.getElementById('nip-status-icon');
     const hint = document.getElementById('nip-hint');
 
-    // Cek di data lokal dulu
-    const localMatch = appData.find(d => d.nip === nip);
+    // Cek dari data cache lokal dulu
+    const localMatch = sheetData.find(d => d.nip === nip);
     if (localMatch) {
         nipInput.classList.add('error');
         nipInput.classList.remove('valid');
@@ -879,54 +749,48 @@ function checkNipDuplicate(nip) {
         icon.innerHTML = '<i class="fa-solid fa-circle-exclamation text-rose-400"></i>';
         hint.innerHTML = `<span class="text-rose-400">NIP ini sudah terdaftar di ${localMatch.namaOpd}</span>`;
         showDuplicateModal(localMatch);
-        return true;
+        return;
     }
 
-    // Jika terhubung ke Google Sheets, cek juga di sana
-    if (settings.appsScriptUrl) {
-        fetch(settings.appsScriptUrl, {
-            method: 'POST',
-            headers: { 'Content-Type': 'text/plain' },
-            body: JSON.stringify({ action: 'checkNip', nip: nip })
-        })
-        .then(r => r.json())
-        .then(res => {
-            if (res.exists) {
-                nipInput.classList.add('error');
-                nipInput.classList.remove('valid');
-                icon.classList.remove('hidden');
-                icon.innerHTML = '<i class="fa-solid fa-circle-exclamation text-rose-400"></i>';
-                hint.innerHTML = '<span class="text-rose-400">NIP ini sudah terdaftar di spreadsheet</span>';
-                showDuplicateModal({ nip: nip, namaOpd: 'Data di Spreadsheet' });
-                return true;
-            } else {
-                nipInput.classList.remove('error');
-                nipInput.classList.add('valid');
-                icon.classList.remove('hidden');
-                icon.innerHTML = '<i class="fa-solid fa-circle-check text-brand-400"></i>';
-                hint.innerHTML = '<span class="text-brand-400">NIP tersedia</span>';
-                return false;
-            }
-        })
-        .catch(() => {
-            // Jika gagal cek server, anggap tidak duplikat (data lokal sudah dicek)
+    // Cek ke server
+    icon.classList.remove('hidden');
+    icon.innerHTML = '<i class="fa-solid fa-spinner fa-spin text-slate-400"></i>';
+    hint.innerHTML = '<span class="text-slate-500">Memeriksa NIP ke server...</span>';
+    nipChecking = true;
+
+    fetch(APPS_SCRIPT_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain' },
+        body: JSON.stringify({ action: 'checkNip', nip: nip })
+    })
+    .then(r => r.json())
+    .then(res => {
+        nipChecking = false;
+        if (res.exists) {
+            nipInput.classList.add('error');
+            nipInput.classList.remove('valid');
+            icon.innerHTML = '<i class="fa-solid fa-circle-exclamation text-rose-400"></i>';
+            hint.innerHTML = `<span class="text-rose-400">NIP ini sudah terdaftar di ${res.namaOpd || 'Spreadsheet'}</span>`;
+            showDuplicateModal({ nip: nip, namaOpd: res.namaOpd || 'Data di Spreadsheet' });
+        } else {
             nipInput.classList.remove('error');
             nipInput.classList.add('valid');
-            icon.classList.remove('hidden');
             icon.innerHTML = '<i class="fa-solid fa-circle-check text-brand-400"></i>';
-            hint.innerHTML = '<span class="text-brand-400">NIP tersedia (lokal)</span>';
-        });
-    } else {
+            hint.innerHTML = '<span class="text-brand-400">NIP tersedia, dapat digunakan</span>';
+        }
+    })
+    .catch(() => {
+        nipChecking = false;
         nipInput.classList.remove('error');
         nipInput.classList.add('valid');
-        icon.classList.remove('hidden');
         icon.innerHTML = '<i class="fa-solid fa-circle-check text-brand-400"></i>';
         hint.innerHTML = '<span class="text-brand-400">NIP tersedia</span>';
-    }
-    return false;
+    });
 }
 
-// Tampilkan modal duplikat NIP
+// ===============================================================
+// MODAL DUPLIKAT NIP
+// ===============================================================
 function showDuplicateModal(existingData) {
     const content = `
         <div class="text-center mb-5">
@@ -934,21 +798,24 @@ function showDuplicateModal(existingData) {
                 <i class="fa-solid fa-triangle-exclamation text-rose-400 text-2xl"></i>
             </div>
             <h3 class="font-display text-xl font-bold text-white mb-1">NIP Sudah Terdaftar</h3>
-            <p class="text-sm text-slate-400">NIP yang Anda masukkan sudah pernah digunakan untuk upload dokumen.</p>
+            <p class="text-sm text-slate-400">NIP yang Anda masukkan sudah pernah digunakan untuk upload dokumen dan tidak diperbolehkan input lebih dari sekali.</p>
         </div>
         <div class="bg-surface-900 rounded-xl p-4 mb-5 border border-surface-600">
-            <div class="space-y-2 text-sm">
-                <div class="flex justify-between">
+            <div class="space-y-3 text-sm">
+                <div class="flex justify-between items-center">
                     <span class="text-slate-400">NIP</span>
-                    <span class="font-mono font-semibold text-white">${existingData.nip}</span>
+                    <span class="font-mono font-semibold text-white">${formatNip(existingData.nip)}</span>
                 </div>
-                <div class="flex justify-between">
+                <div class="flex justify-between items-center">
                     <span class="text-slate-400">OPD</span>
-                    <span class="font-semibold text-white">${existingData.namaOpd || '-'}</span>
+                    <span class="font-semibold text-white text-right max-w-[200px] truncate" title="${existingData.namaOpd}">${existingData.namaOpd || '-'}</span>
                 </div>
             </div>
         </div>
-        <p class="text-xs text-amber-400 mb-4 text-center"><i class="fa-solid fa-info-circle mr-1"></i> Satu NIP hanya diperbolehkan mengupload dokumen satu kali.</p>
+        <p class="text-xs text-amber-400 mb-5 text-center flex items-start gap-1.5 justify-center">
+            <i class="fa-solid fa-info-circle mt-0.5"></i>
+            <span>Satu NIP hanya diperbolehkan mengupload dokumen satu kali sesuai ketentuan.</span>
+        </p>
         <button onclick="closeModal()" class="w-full py-3 rounded-xl font-bold text-white bg-rose-600 hover:bg-rose-500 transition">
             <i class="fa-solid fa-xmark mr-1"></i> Tutup
         </button>
@@ -957,187 +824,172 @@ function showDuplicateModal(existingData) {
 }
 
 // ===============================================================
-// SUBMIT FORM
+// SUBMIT FORM KE GOOGLE SHEETS
 // ===============================================================
 function handleSubmit() {
     const opd = document.getElementById('inputOpd').value.trim();
     const nip = document.getElementById('inputNip').value.trim();
+
+    if (!opd) { showToast('Silakan pilih nama OPD.', 'error'); document.getElementById('inputOpd').focus(); return; }
+    if (!nip || nip.length !== 18) { showToast('NIP harus terdiri dari 18 digit angka.', 'error'); document.getElementById('inputNip').focus(); return; }
+    if (!selectedFile) { showToast('Silakan upload dokumen terlebih dahulu.', 'error'); return; }
+    if (nipChecking) { showToast('Sedang memeriksa NIP, harap tunggu...', 'warning'); return; }
+
+    // Cek duplikat dari cache
+    if (sheetData.find(d => d.nip === nip)) {
+        showDuplicateModal(sheetData.find(d => d.nip === nip));
+        return;
+    }
+
     const btn = document.getElementById('btnSubmit');
     const btnText = document.getElementById('btnText');
-
-    // Validasi
-    if (!opd) {
-        showToast('Silakan pilih nama OPD.', 'error');
-        document.getElementById('inputOpd').focus();
-        return;
-    }
-
-    if (!nip || nip.length !== 18) {
-        showToast('NIP harus terdiri dari 18 digit angka.', 'error');
-        document.getElementById('inputNip').focus();
-        return;
-    }
-
-    if (!selectedFile) {
-        showToast('Silakan upload dokumen terlebih dahulu.', 'error');
-        return;
-    }
-
-    // Cek duplikat NIP sekali lagi
-    const isDuplicate = appData.find(d => d.nip === nip);
-    if (isDuplicate) {
-        showDuplicateModal(isDuplicate);
-        return;
-    }
-
-    // Loading state
     btn.disabled = true;
     btnText.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i> Mengirim...';
 
-    const entry = {
-        id: Date.now(),
-        tanggal: new Date().toISOString(),
+    const ext = '.' + selectedFile.name.split('.').pop().toLowerCase();
+    const payload = {
+        action: 'submit',
         namaOpd: opd,
         nip: nip,
         fileName: selectedFile.name,
-        fileType: getFileCategory('.' + selectedFile.name.split('.').pop().toLowerCase()),
+        fileType: getFileCategory(ext),
         fileMime: selectedFile.type,
-        fileSize: selectedFile.size,
-        fileBase64: selectedFileBase64,
-        status: 'Terverifikasi'
+        fileBase64: selectedFileBase64
     };
 
-    // Simpan ke localStorage
-    appData.push(entry);
-    saveData();
-
-    // Kirim ke Google Sheets jika terhubung
-    if (settings.appsScriptUrl) {
-        submitToSheet(entry);
-    } else {
-        // Selesai (mode lokal)
-        finishSubmit(entry);
-    }
-}
-
-// Kirim data ke Google Sheets
-function submitToSheet(entry) {
-    const payload = {
-        action: 'submit',
-        namaOpd: entry.namaOpd,
-        nip: entry.nip,
-        fileName: entry.fileName,
-        fileType: entry.fileType,
-        fileMime: entry.fileMime,
-        fileBase64: entry.fileBase64
-    };
-
-    fetch(settings.appsScriptUrl, {
+    fetch(APPS_SCRIPT_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'text/plain' },
         body: JSON.stringify(payload)
     })
     .then(r => r.json())
     .then(res => {
+        btn.disabled = false;
+        btnText.innerHTML = '<i class="fa-solid fa-paper-plane mr-1"></i> Kirim Dokumen';
+
         if (res.success) {
-            showToast('Data berhasil disimpan ke Google Sheets!', 'success');
+            showToast('Dokumen berhasil diupload dan disimpan ke Google Sheets!', 'success');
+            // Reset form
+            document.getElementById('inputOpd').value = '';
+            document.getElementById('inputNip').value = '';
+            document.getElementById('inputNip').classList.remove('valid', 'error');
+            document.getElementById('nip-status-icon').classList.add('hidden');
+            document.getElementById('nip-hint').innerHTML = '<span class="text-slate-500">Format: 18 digit angka</span>';
+            removeFile();
+            // Refresh data dari Sheets
+            fetchSheetData();
         } else if (res.duplicate) {
-            // NIP duplikat di server, hapus dari lokal
-            appData = appData.filter(d => d.id !== entry.id);
-            saveData();
-            showToast('NIP sudah terdaftar di spreadsheet. Data tidak disimpan.', 'error');
-            showDuplicateModal({ nip: entry.nip, namaOpd: 'Data di Spreadsheet' });
+            showDuplicateModal({ nip: nip, namaOpd: 'Data di Spreadsheet' });
         } else {
-            showToast('Data tersimpan lokal. Sheets: ' + res.message, 'warning');
+            showToast('Gagal menyimpan: ' + res.message, 'error');
         }
-        finishSubmit(entry);
     })
     .catch(err => {
-        showToast('Data tersimpan lokal. Gagal kirim ke Sheets.', 'warning');
-        finishSubmit(entry);
+        btn.disabled = false;
+        btnText.innerHTML = '<i class="fa-solid fa-paper-plane mr-1"></i> Kirim Dokumen';
+        showToast('Gagal mengirim data. Periksa koneksi internet Anda.', 'error');
     });
 }
 
-// Finalisasi submit
-function finishSubmit(entry) {
-    // Reset form
-    document.getElementById('inputOpd').value = '';
-    document.getElementById('inputNip').value = '';
-    document.getElementById('inputNip').classList.remove('valid', 'error');
-    document.getElementById('nip-status-icon').classList.add('hidden');
-    document.getElementById('nip-hint').innerHTML = '<span class="text-slate-500">Format: 18 digit angka</span>';
-    removeFile();
+// ===============================================================
+// HAPUS DATA DARI SHEETS
+// ===============================================================
+function deleteEntry(nip) {
+    const content = `
+        <div class="text-center mb-5">
+            <div class="w-16 h-16 mx-auto rounded-full bg-amber-500/15 flex items-center justify-center mb-4">
+                <i class="fa-solid fa-trash-can text-amber-400 text-2xl"></i>
+            </div>
+            <h3 class="font-display text-lg font-bold text-white mb-1">Hapus Data?</h3>
+            <p class="text-sm text-slate-400">Data NIP <span class="font-mono text-white">${formatNip(nip)}</span> akan dihapus secara permanen dari Spreadsheet.</p>
+        </div>
+        <div class="flex gap-3">
+            <button onclick="closeModal()" class="flex-1 py-3 rounded-xl font-semibold glass-light text-slate-300 hover:text-white transition">Batal</button>
+            <button onclick="confirmDelete('${nip}')" id="btnDeleteConfirm" class="flex-1 py-3 rounded-xl font-bold text-white bg-rose-600 hover:bg-rose-500 transition">Hapus</button>
+        </div>
+    `;
+    showModal(content);
+}
 
-    // Reset tombol
-    const btn = document.getElementById('btnSubmit');
-    const btnText = document.getElementById('btnText');
-    btn.disabled = false;
-    btnText.innerHTML = '<i class="fa-solid fa-paper-plane mr-1"></i> Kirim Dokumen';
+function confirmDelete(nip) {
+    const btn = document.getElementById('btnDeleteConfirm');
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-1"></i> Menghapus...';
 
-    // Update UI
-    renderStats();
-    renderRecentUploads();
-    showToast('Dokumen berhasil diupload!', 'success');
+    fetch(APPS_SCRIPT_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain' },
+        body: JSON.stringify({ action: 'delete', nip: nip })
+    })
+    .then(r => r.json())
+    .then(res => {
+        closeModal();
+        if (res.success) {
+            showToast('Data berhasil dihapus dari Spreadsheet.', 'success');
+            fetchSheetData();
+        } else {
+            showToast('Gagal menghapus: ' + res.message, 'error');
+        }
+    })
+    .catch(() => {
+        closeModal();
+        showToast('Gagal menghapus. Periksa koneksi internet.', 'error');
+    });
 }
 
 // ===============================================================
-// MONITORING & TABEL
+// RENDER STATISTIK
 // ===============================================================
-function refreshData() {
-    // Jika terhubung ke Sheets, ambil data dari sana
-    if (settings.appsScriptUrl) {
-        fetch(settings.appsScriptUrl)
-        .then(r => r.json())
-        .then(sheetData => {
-            if (Array.isArray(sheetData)) {
-                // Gabungkan data lokal dan Sheets (hindari duplikat berdasarkan NIP)
-                const localNips = new Set(appData.map(d => d.nip));
-                const merged = [...appData];
-                sheetData.forEach(s => {
-                    if (!localNips.has(s.nip)) {
-                        merged.push({
-                            id: Date.now() + Math.random(),
-                            tanggal: new Date().toISOString(),
-                            namaOpd: s.namaOpd,
-                            nip: s.nip,
-                            fileName: s.fileName,
-                            fileType: s.fileType ? s.fileType.toLowerCase() : '',
-                            status: s.status || 'Terverifikasi',
-                            fromSheet: true
-                        });
-                    }
-                });
-                renderTable(merged);
-                renderOpdChart(merged);
-            } else {
-                renderTable(appData);
-                renderOpdChart(appData);
-            }
-        })
-        .catch(() => {
-            renderTable(appData);
-            renderOpdChart(appData);
-        });
-    } else {
-        renderTable(appData);
-        renderOpdChart(appData);
+function renderStats() {
+    const total = sheetData.length;
+    const opds = new Set(sheetData.map(d => d.namaOpd)).size;
+    const pdfs = sheetData.filter(d => d.fileType === 'pdf').length;
+    const excels = sheetData.filter(d => d.fileType === 'excel').length;
+
+    animateCounter('stat-total', total);
+    animateCounter('stat-opd', opds);
+    animateCounter('stat-pdf', pdfs);
+    animateCounter('stat-excel', excels);
+}
+
+function renderRecentUploads() {
+    const container = document.getElementById('recent-uploads');
+    const recent = [...sheetData].sort((a, b) => new Date(b.tanggal) - new Date(a.tanggal)).slice(0, 5);
+
+    if (recent.length === 0) {
+        container.innerHTML = '<p class="text-xs text-slate-500 text-center py-4">Belum ada data upload</p>';
+        return;
     }
+
+    container.innerHTML = recent.map(d => {
+        const icon = d.fileType === 'pdf' ? 'fa-file-pdf text-rose-400' :
+                     d.fileType === 'excel' ? 'fa-file-excel text-brand-400' : 'fa-file-image text-amber-400';
+        return `<div class="flex items-center gap-3 p-2.5 rounded-lg bg-surface-900/50 border border-surface-700/50">
+            <div class="w-9 h-9 rounded-lg bg-surface-700 flex items-center justify-center flex-shrink-0">
+                <i class="fa-solid ${icon} text-sm"></i>
+            </div>
+            <div class="min-w-0 flex-1">
+                <p class="text-xs font-semibold text-white truncate">${d.namaOpd}</p>
+                <p class="text-[0.65rem] text-slate-500">${getTimeAgo(d.tanggal)} &bull; ${d.fileName || '-'}</p>
+            </div>
+        </div>`;
+    }).join('');
 }
 
-function renderTable(data) {
+// ===============================================================
+// RENDER TABEL MONITORING
+// ===============================================================
+function renderTable() {
     const tbody = document.getElementById('tableBody');
-    const search = (document.getElementById('searchInput').value || '').toLowerCase();
-    const filterType = document.getElementById('filterType').value;
+    const search = (document.getElementById('searchInput')?.value || '').toLowerCase();
+    const filterType = document.getElementById('filterType')?.value || '';
 
-    let filtered = data.filter(d => {
-        const matchSearch = !search ||
-            d.namaOpd.toLowerCase().includes(search) ||
-            d.nip.includes(search);
+    let filtered = sheetData.filter(d => {
+        const matchSearch = !search || d.namaOpd.toLowerCase().includes(search) || d.nip.includes(search);
         const matchType = !filterType || d.fileType === filterType;
         return matchSearch && matchType;
     });
 
-    // Urutkan berdasarkan tanggal terbaru
     filtered.sort((a, b) => new Date(b.tanggal) - new Date(a.tanggal));
 
     if (filtered.length === 0) {
@@ -1148,14 +1000,11 @@ function renderTable(data) {
 
     tbody.innerHTML = filtered.map((d, i) => {
         const tanggal = formatTanggal(d.tanggal);
-        const badgeClass = d.fileType === 'pdf' ? 'badge-pdf' :
-                           d.fileType === 'excel' ? 'badge-excel' : 'badge-image';
-        const badgeIcon = d.fileType === 'pdf' ? 'fa-file-pdf' :
-                          d.fileType === 'excel' ? 'fa-file-excel' : 'fa-file-image';
-        const badgeLabel = d.fileType === 'pdf' ? 'PDF' :
-                           d.fileType === 'excel' ? 'Excel' : 'Gambar';
+        const badgeClass = d.fileType === 'pdf' ? 'badge-pdf' : d.fileType === 'excel' ? 'badge-excel' : 'badge-image';
+        const badgeIcon = d.fileType === 'pdf' ? 'fa-file-pdf' : d.fileType === 'excel' ? 'fa-file-excel' : 'fa-file-image';
+        const badgeLabel = d.fileType === 'pdf' ? 'PDF' : d.fileType === 'excel' ? 'Excel' : 'Gambar';
 
-        return `<tr class="animate-slide-in" style="animation-delay:${i * 30}ms">
+        return `<tr class="animate-slide-in" style="animation-delay:${Math.min(i * 30, 300)}ms">
             <td class="text-slate-500 font-mono text-xs">${i + 1}</td>
             <td class="text-xs text-slate-400 whitespace-nowrap">${tanggal}</td>
             <td class="text-sm font-semibold text-white max-w-[180px] truncate" title="${d.namaOpd}">${d.namaOpd}</td>
@@ -1164,7 +1013,7 @@ function renderTable(data) {
             <td><span class="badge ${badgeClass}"><i class="fa-solid ${badgeIcon}"></i> ${badgeLabel}</span></td>
             <td><span class="badge badge-active"><i class="fa-solid fa-circle-check"></i> ${d.status || 'Terverifikasi'}</span></td>
             <td>
-                <button onclick="deleteEntry(${d.id})" class="w-8 h-8 rounded-lg bg-rose-500/10 flex items-center justify-center text-rose-400 hover:bg-rose-500/20 transition" title="Hapus">
+                <button onclick="deleteEntry('${d.nip}')" class="w-8 h-8 rounded-lg bg-rose-500/10 flex items-center justify-center text-rose-400 hover:bg-rose-500/20 transition" title="Hapus">
                     <i class="fa-solid fa-trash-can text-xs"></i>
                 </button>
             </td>
@@ -1172,17 +1021,15 @@ function renderTable(data) {
     }).join('');
 }
 
-function filterTable() {
-    refreshData();
-}
-
-function renderOpdChart(data) {
+// ===============================================================
+// RENDER CHART OPD
+// ===============================================================
+function renderOpdChart() {
     const container = document.getElementById('opd-bars');
     const opdCount = {};
 
-    data.forEach(d => {
+    sheetData.forEach(d => {
         const name = d.namaOpd;
-        // Singkat nama OPD
         const short = name.replace('Dinas ', 'D. ').replace('Badan ', 'B. ').replace('Sekretariat ', 'Sek. ').replace('Kecamatan ', 'Kec. ');
         opdCount[short] = (opdCount[short] || 0) + 1;
     });
@@ -1195,183 +1042,23 @@ function renderOpdChart(data) {
         return;
     }
 
+    const colors = ['from-brand-600 to-brand-400', 'from-teal-600 to-teal-400', 'from-emerald-600 to-emerald-400', 'from-cyan-600 to-cyan-400', 'from-amber-600 to-amber-400', 'from-orange-600 to-orange-400', 'from-lime-600 to-lime-400'];
+
     container.innerHTML = entries.map(([name, count]) => {
         const pct = Math.max(5, (count / maxCount) * 100);
-        const colors = ['from-brand-600 to-brand-400', 'from-teal-600 to-teal-400', 'from-emerald-600 to-emerald-400', 'from-cyan-600 to-cyan-400', 'from-amber-600 to-amber-400'];
         const color = colors[Math.abs(hashStr(name)) % colors.length];
         return `<div class="flex items-center gap-3">
             <span class="text-xs text-slate-400 w-36 sm:w-44 truncate flex-shrink-0 text-right" title="${name}">${name}</span>
             <div class="flex-1 bg-surface-800 rounded-lg overflow-hidden">
-                <div class="opd-bar bg-gradient-to-r ${color}" style="width:${pct}%"></div>
+                <div class="opd-bar bg-gradient-to-r ${color} animate-bar-grow" style="width:${pct}%"></div>
             </div>
             <span class="text-xs font-bold text-white w-6 text-center">${count}</span>
         </div>`;
     }).join('');
 }
 
-function deleteEntry(id) {
-    const content = `
-        <div class="text-center mb-5">
-            <div class="w-16 h-16 mx-auto rounded-full bg-amber-500/15 flex items-center justify-center mb-4">
-                <i class="fa-solid fa-trash-can text-amber-400 text-2xl"></i>
-            </div>
-            <h3 class="font-display text-lg font-bold text-white mb-1">Hapus Data?</h3>
-            <p class="text-sm text-slate-400">Data yang dihapus tidak dapat dikembalikan.</p>
-        </div>
-        <div class="flex gap-3">
-            <button onclick="closeModal()" class="flex-1 py-3 rounded-xl font-semibold glass-light text-slate-300 hover:text-white transition">Batal</button>
-            <button onclick="confirmDelete(${id})" class="flex-1 py-3 rounded-xl font-bold text-white bg-rose-600 hover:bg-rose-500 transition">Hapus</button>
-        </div>
-    `;
-    showModal(content);
-}
-
-function confirmDelete(id) {
-    appData = appData.filter(d => d.id !== id);
-    saveData();
-    closeModal();
-    refreshData();
-    renderStats();
-    renderRecentUploads();
-    showToast('Data berhasil dihapus.', 'success');
-}
-
 // ===============================================================
-// STATISTIK
-// ===============================================================
-function renderStats() {
-    const total = appData.length;
-    const opds = new Set(appData.map(d => d.namaOpd)).size;
-    const pdfs = appData.filter(d => d.fileType === 'pdf').length;
-    const excels = appData.filter(d => d.fileType === 'excel').length;
-
-    animateCounter('stat-total', total);
-    animateCounter('stat-opd', opds);
-    animateCounter('stat-pdf', pdfs);
-    animateCounter('stat-excel', excels);
-}
-
-function animateCounter(elId, target) {
-    const el = document.getElementById(elId);
-    const current = parseInt(el.textContent) || 0;
-    if (current === target) return;
-
-    const duration = 600;
-    const start = performance.now();
-
-    function tick(now) {
-        const elapsed = now - start;
-        const progress = Math.min(elapsed / duration, 1);
-        const eased = 1 - Math.pow(1 - progress, 3); // easeOutCubic
-        el.textContent = Math.round(current + (target - current) * eased);
-        if (progress < 1) requestAnimationFrame(tick);
-    }
-    requestAnimationFrame(tick);
-}
-
-// Upload terakhir di sidebar
-function renderRecentUploads() {
-    const container = document.getElementById('recent-uploads');
-    const recent = [...appData].sort((a, b) => new Date(b.tanggal) - new Date(a.tanggal)).slice(0, 5);
-
-    if (recent.length === 0) {
-        container.innerHTML = '<p class="text-xs text-slate-500 text-center py-4">Belum ada data upload</p>';
-        return;
-    }
-
-    container.innerHTML = recent.map(d => {
-        const icon = d.fileType === 'pdf' ? 'fa-file-pdf text-rose-400' :
-                     d.fileType === 'excel' ? 'fa-file-excel text-brand-400' : 'fa-file-image text-amber-400';
-        const timeAgo = getTimeAgo(d.tanggal);
-        return `<div class="flex items-center gap-3 p-2.5 rounded-lg bg-surface-900/50 border border-surface-700/50">
-            <div class="w-9 h-9 rounded-lg bg-surface-700 flex items-center justify-center flex-shrink-0">
-                <i class="fa-solid ${icon} text-sm"></i>
-            </div>
-            <div class="min-w-0 flex-1">
-                <p class="text-xs font-semibold text-white truncate">${d.namaOpd}</p>
-                <p class="text-[0.65rem] text-slate-500">${timeAgo} &bull; ${d.fileName}</p>
-            </div>
-        </div>`;
-    }).join('');
-}
-
-// ===============================================================
-// PENGATURAN
-// ===============================================================
-function saveSettings() {
-    const url = document.getElementById('appsScriptUrl').value.trim();
-    settings.appsScriptUrl = url;
-    localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
-    updateConnectionStatus();
-
-    if (url) {
-        showToast('Pengaturan berhasil disimpan. Koneksi ke Google Sheets aktif.', 'success');
-    } else {
-        showToast('Pengaturan disimpan. Mode lokal aktif.', 'warning');
-    }
-}
-
-function testConnection() {
-    const url = document.getElementById('appsScriptUrl').value.trim();
-    if (!url) {
-        showToast('Masukkan URL Google Apps Script terlebih dahulu.', 'error');
-        return;
-    }
-
-    showToast('Menguji koneksi...', 'warning');
-
-    fetch(url)
-    .then(r => r.json())
-    .then(res => {
-        if (res.error) {
-            showToast('Koneksi berhasil tapi ada error: ' + res.error, 'error');
-        } else {
-            showToast('Koneksi berhasil! Data dari Spreadsheet ditemukan.', 'success');
-            settings.appsScriptUrl = url;
-            localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
-            updateConnectionStatus();
-        }
-    })
-    .catch(err => {
-        showToast('Gagal terhubung ke Google Sheets. Periksa URL dan deployment.', 'error');
-    });
-}
-
-function updateConnectionStatus() {
-    const dot = document.getElementById('conn-dot');
-    const text = document.getElementById('conn-text');
-    if (settings.appsScriptUrl) {
-        dot.className = 'w-2 h-2 rounded-full bg-brand-400 animate-pulse';
-        text.textContent = 'Terhubung Sheets';
-        text.className = 'text-brand-400';
-    } else {
-        dot.className = 'w-2 h-2 rounded-full bg-amber-500 animate-pulse';
-        text.textContent = 'Mode Lokal';
-        text.className = 'text-slate-400';
-    }
-}
-
-function displayScriptCode() {
-    document.getElementById('scriptCode').textContent = APPS_SCRIPT_CODE;
-}
-
-function copyScriptCode() {
-    navigator.clipboard.writeText(APPS_SCRIPT_CODE).then(() => {
-        showToast('Kode berhasil disalin ke clipboard!', 'success');
-    }).catch(() => {
-        // Fallback
-        const ta = document.createElement('textarea');
-        ta.value = APPS_SCRIPT_CODE;
-        document.body.appendChild(ta);
-        ta.select();
-        document.execCommand('copy');
-        document.body.removeChild(ta);
-        showToast('Kode berhasil disalin!', 'success');
-    });
-}
-
-// ===============================================================
-// MODAL
+// MODAL & TOAST
 // ===============================================================
 function showModal(content) {
     document.getElementById('modalContent').innerHTML = content;
@@ -1380,37 +1067,31 @@ function showModal(content) {
 }
 
 function closeModal(e) {
-    if (e && e.target !== document.getElementById('modalOverlay')) return;
+    if (e && e.target && e.target !== document.getElementById('modalOverlay')) return;
     document.getElementById('modalOverlay').classList.remove('show');
     document.body.style.overflow = '';
 }
 
-// ===============================================================
-// TOAST
-// ===============================================================
 function showToast(message, type = 'success') {
     const container = document.getElementById('toast-container');
     const toast = document.createElement('div');
     toast.className = `toast toast-${type}`;
-
-    const icon = type === 'success' ? 'fa-circle-check' :
-                 type === 'error' ? 'fa-circle-xmark' : 'fa-triangle-exclamation';
-
-    toast.innerHTML = `
-        <i class="fa-solid ${icon} text-lg flex-shrink-0"></i>
-        <span class="flex-1">${message}</span>
-        <button onclick="this.parentElement.remove()" class="flex-shrink-0 opacity-60 hover:opacity-100 transition">
-            <i class="fa-solid fa-xmark"></i>
-        </button>
-    `;
-
+    const icon = type === 'success' ? 'fa-circle-check' : type === 'error' ? 'fa-circle-xmark' : 'fa-triangle-exclamation';
+    toast.innerHTML = `<i class="fa-solid ${icon} text-lg flex-shrink-0"></i><span class="flex-1">${message}</span><button onclick="this.parentElement.remove()" class="flex-shrink-0 opacity-60 hover:opacity-100 transition"><i class="fa-solid fa-xmark"></i></button>`;
     container.appendChild(toast);
+    setTimeout(() => { toast.classList.add('animate-toast-out'); setTimeout(() => toast.remove(), 300); }, 4000);
+}
 
-    // Auto remove
-    setTimeout(() => {
-        toast.classList.add('animate-toast-out');
-        setTimeout(() => toast.remove(), 300);
-    }, 4000);
+// ===============================================================
+// LOADING
+// ===============================================================
+function showLoading(text) {
+    document.getElementById('loadingText').textContent = text || 'Memuat...';
+    document.getElementById('loadingOverlay').classList.add('show');
+}
+
+function hideLoading() {
+    document.getElementById('loadingOverlay').classList.remove('show');
 }
 
 // ===============================================================
@@ -1432,18 +1113,22 @@ function formatFileSize(bytes) {
 }
 
 function formatTanggal(isoString) {
+    if (!isoString) return '-';
     const d = new Date(isoString);
+    if (isNaN(d.getTime())) return '-';
     return d.toLocaleDateString('id-ID', { day:'2-digit', month:'short', year:'numeric', hour:'2-digit', minute:'2-digit' });
 }
 
 function formatNip(nip) {
-    if (!nip || nip.length < 18) return nip;
+    if (!nip || nip.length < 18) return nip || '-';
     return nip.slice(0,8) + ' ' + nip.slice(8,14) + ' ' + nip.slice(14,15) + ' ' + nip.slice(15,17) + ' ' + nip.slice(17);
 }
 
 function getTimeAgo(isoString) {
+    if (!isoString) return '-';
     const now = new Date();
     const then = new Date(isoString);
+    if (isNaN(then.getTime())) return '-';
     const diff = Math.floor((now - then) / 1000);
     if (diff < 60) return 'Baru saja';
     if (diff < 3600) return Math.floor(diff / 60) + ' menit lalu';
@@ -1460,6 +1145,22 @@ function hashStr(str) {
         hash |= 0;
     }
     return hash;
+}
+
+function animateCounter(elId, target) {
+    const el = document.getElementById(elId);
+    const current = parseInt(el.textContent) || 0;
+    if (current === target) { el.textContent = target; return; }
+    const duration = 600;
+    const start = performance.now();
+    function tick(now) {
+        const elapsed = now - start;
+        const progress = Math.min(elapsed / duration, 1);
+        const eased = 1 - Math.pow(1 - progress, 3);
+        el.textContent = Math.round(current + (target - current) * eased);
+        if (progress < 1) requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
 }
 </script>
 </body>
