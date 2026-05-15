@@ -833,6 +833,7 @@ function handleSubmit() {
     if (!opd) { showToast('Silakan pilih nama OPD.', 'error'); document.getElementById('inputOpd').focus(); return; }
     if (!nip || nip.length !== 18) { showToast('NIP harus terdiri dari 18 digit angka.', 'error'); document.getElementById('inputNip').focus(); return; }
     if (!selectedFile) { showToast('Silakan upload dokumen terlebih dahulu.', 'error'); return; }
+    if (!selectedFileBase64) { showToast('File masih diproses, harap tunggu sebentar...', 'warning'); return; }
     if (nipChecking) { showToast('Sedang memeriksa NIP, harap tunggu...', 'warning'); return; }
 
     // Cek duplikat dari cache
