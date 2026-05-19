@@ -171,7 +171,7 @@
                                 <select id="inputOpd" class="input-field" required><option value="">-- Pilih OPD --</option></select>
                             </div>
                             <div class="mb-5">
-                                <label class="block text-sm font-semibold text-slate-300 mb-2"><i class="fa-solid fa-id-card mr-1 text-brand-400"></i> NIP</label>
+                                <label class="block text-sm font-semibold text-slate-300 mb-2"><i class="fa-solid fa-id-card mr-1 text-brand-400"></i> NIP (Operator Kepegawaian) </label>
                                 <div class="relative">
                                     <input type="text" id="inputNip" class="input-field pr-10" placeholder="Masukkan 18 digit NIP" maxlength="18" required autocomplete="off">
                                     <span id="nip-status-icon" class="absolute right-3 top-1/2 -translate-y-1/2 text-sm hidden"></span>
@@ -184,13 +184,22 @@
                                 <p class="text-xs mt-1.5 text-slate-500">Untuk notifikasi status verifikasi</p>
                             </div>
                             <div class="mb-6">
-                                <label class="block text-sm font-semibold text-slate-300 mb-2"><i class="fa-solid fa-paperclip mr-1 text-brand-400"></i> Upload Dokumen</label>
+                                <label class="block text-sm font-semibold text-slate-300 mb-2">
+                                    <i class="fa-solid fa-paperclip mr-1 text-brand-400"></i> Upload Dokumen
+                                </label>
                                 <div id="uploadZone" class="upload-zone" onclick="document.getElementById('inputFile').click()">
                                     <input type="file" id="inputFile" class="hidden" accept=".xlsx,.xls,.pdf,.jpg,.jpeg,.png">
                                     <div id="uploadPlaceholder">
-                                        <div class="w-16 h-16 mx-auto mb-4 rounded-2xl bg-surface-700 flex items-center justify-center animate-float"><i class="fa-solid fa-cloud-arrow-up text-2xl text-brand-400"></i></div>
+                                        <div class="w-16 h-16 mx-auto mb-4 rounded-2xl bg-surface-700 flex items-center justify-center animate-float">
+                                            <i class="fa-solid fa-cloud-arrow-up text-2xl text-brand-400"></i>
+                                        </div>
                                         <p class="text-slate-300 font-semibold mb-1">Klik atau seret file ke sini</p>
                                         <p class="text-xs text-slate-500">Format: Excel, PDF, JPG/PNG (Maks. 5MB)</p>
+                                        <div class="flex justify-center gap-2 mt-3">
+                                            <span class="badge badge-excel"><i class="fa-solid fa-file-excel"></i> Excel</span>
+                                            <span class="badge badge-pdf"><i class="fa-solid fa-file-pdf"></i> PDF</span>
+                                            <span class="badge badge-image"><i class="fa-solid fa-file-image"></i> Gambar</span>
+                                        </div>
                                     </div>
                                     <div id="uploadPreview" class="hidden">
                                         <div class="flex items-center justify-center gap-3">
@@ -199,11 +208,13 @@
                                                 <p id="fileName" class="text-sm font-semibold text-white truncate max-w-[200px]"></p>
                                                 <p id="fileSize" class="text-xs text-slate-400"></p>
                                             </div>
-                                            <button type="button" onclick="event.stopPropagation(); removeFile()" class="ml-2 w-8 h-8 rounded-lg bg-red-500/15 flex items-center justify-center text-red-400 hover:bg-red-500/25 transition"><i class="fa-solid fa-xmark text-sm"></i></button>
+                                            <button type="button" onclick="event.stopPropagation(); removeFile()" class="ml-2 w-8 h-8 rounded-lg bg-red-500/15 flex items-center justify-center text-red-400 hover:bg-red-500/25 transition">
+                                                <i class="fa-solid fa-xmark text-sm"></i>
+                                            </button>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
+                            </div>                            
                             <button type="button" id="btnSubmit" onclick="handleSubmit()" class="btn-primary w-full py-3.5 rounded-xl font-bold text-white flex items-center justify-center gap-2">
                                 <i class="fa-solid fa-paper-plane"></i><span id="btnText">Kirim Dokumen</span>
                             </button>
