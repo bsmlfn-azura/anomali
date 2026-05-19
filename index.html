@@ -440,19 +440,42 @@ function switchTab(tabName) {
 // ===============================================================
 // FETCH & RENDER DATA
 // ===============================================================
+// GANTI FUNGSI fetchSheetData LAMA DENGAN INI:
 function fetchSheetData() {
-    showLoading('Memuat data...');
-    fetch(APPS_SCRIPT_URL)
-    .then(r => r.json())
+    showLoading('Memuat data dari Google Sheets...');
+    
+    // Timeout 15 detik jika server tidak merespon
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 15000);
+
+    fetch(APPS_SCRIPT_URL, { signal: controller.signal })
+    .then(r => {
+        clearTimeout(timeoutId);
+        if (!r.ok) throw new Error('HTTP Error ' + r.status);
+        return r.json();
+    })
     .then(res => {
         hideLoading();
-        sheetData = Array.isArray(res) ? res : [];
+        if (res.error) {
+            showToast('Error dari Spreadsheet: ' + res.error, 'error');
+            sheetData = [];
+        } else if (Array.isArray(res)) {
+            sheetData = res;
+        } else {
+            sheetData = [];
+            showToast('Gagal membaca data. Pastikan Apps Script di-deploy sebagai Web App (Anyone).', 'error');
+        }
         renderAll();
     })
-    .catch(() => {
+    .catch(err => {
         hideLoading();
         sheetData = [];
         renderAll();
+        if (err.name === 'AbortError') {
+            showToast('Waktu habis (Timeout). Server merespons terlalu lama.', 'error');
+        } else {
+            showToast('Gagal memuat. Cek koneksi atau URL APPS_SCRIPT_URL. Error: ' + err.message, 'error');
+        }
     });
 }
 
