@@ -102,6 +102,8 @@
         .badge-excel { background:rgba(16,185,129,0.15); color:#34D399; }
         .badge-image { background:rgba(251,191,36,0.15); color:#FBBF24; }
         .badge-active { background:rgba(16,185,129,0.15); color:#34D399; }
+        .badge-admin { background:rgba(244,63,94,0.15); color:#FB7185; }
+        .badge-user { background:rgba(251,191,36,0.15); color:#FBBF24; }
 
         .stat-card {
             background:linear-gradient(135deg, rgba(15,26,46,0.8), rgba(21,34,56,0.6));
@@ -135,10 +137,9 @@
         }
         .btn-primary:hover { box-shadow:0 6px 30px rgba(16,185,129,0.4); transform:translateY(-1px); }
         .btn-primary:active { transform:translateY(0); }
-        .btn-primary .ripple-circle {
-            position:absolute; border-radius:50%; background:rgba(255,255,255,0.3);
-            animation:ripple 0.6s linear; pointer-events:none;
-        }
+
+        .setup-screen { position:fixed; inset:0; z-index:10000; background:#070D1A; display:flex; align-items:center; justify-content:center; }
+        .setup-box { max-width:540px; width:90%; }
 
         @media(max-width:768px) {
             .stat-card .stat-number { font-size:1.4rem; }
@@ -149,11 +150,64 @@
 </head>
 <body class="bg-grid min-h-screen">
 
+    <!-- ===================== LAYAR LOGIN ===================== -->
+    <div class="setup-screen" id="loginScreen">
+        <div class="setup-box animate-fade-up">
+            <div class="text-center mb-8">
+                <div class="flex items-center justify-center gap-3 mb-4">
+                    <img src="https://z-cdn-media.chatglm.cn/files/b61b2fff-7e19-4e6a-8a61-ee332e9d0a29.png?auth_key=1878850857-ac5ae558a6c24667ade06dff83237bd3-0-d32abc528bc1989b1a2e6e6f0930e235"
+                         alt="Logo" class="h-14 w-14 object-contain" style="filter:drop-shadow(0 0 8px rgba(16,185,129,0.3));"
+                         onerror="this.style.display='none'">
+                </div>
+                <h1 class="font-display text-3xl font-bold text-white mb-2">SIMONDA</h1>
+                <p class="text-slate-400 text-sm">Sistem Monitoring Dokumen OPD</p>
+            </div>
+
+            <div class="glass rounded-2xl p-6 sm:p-8">
+                <div class="flex items-center gap-3 mb-5">
+                    <div class="w-8 h-8 rounded-lg bg-brand-500/15 flex items-center justify-center">
+                        <i class="fa-solid fa-right-to-bracket text-brand-400 text-sm"></i>
+                    </div>
+                    <h2 class="font-display text-lg font-bold text-white">Masuk ke Aplikasi</h2>
+                </div>
+
+                <div class="mb-4">
+                    <label class="block text-sm font-semibold text-slate-300 mb-2">Username</label>
+                    <div class="relative">
+                        <i class="fa-solid fa-user absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 text-sm"></i>
+                        <input type="text" id="loginUsername" class="input-field pl-11" placeholder="Masukkan username" autocomplete="off">
+                    </div>
+                </div>
+
+                <div class="mb-6">
+                    <label class="block text-sm font-semibold text-slate-300 mb-2">Password</label>
+                    <div class="relative">
+                        <i class="fa-solid fa-lock absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 text-sm"></i>
+                        <input type="password" id="loginPassword" class="input-field pl-11" placeholder="Masukkan password" onkeydown="if(event.key==='Enter') handleLogin()">
+                        <button onclick="togglePasswordVisibility()" class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300 transition">
+                            <i class="fa-solid fa-eye" id="eyeIcon"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <button onclick="handleLogin()" id="btnLogin" class="btn-primary w-full py-3.5 rounded-xl font-bold text-white flex items-center justify-center gap-2 mb-3">
+                    <i class="fa-solid fa-arrow-right-to-bracket"></i> Masuk
+                </button>
+
+                <div id="loginError" class="hidden p-3 rounded-lg bg-rose-500/10 border border-rose-500/30 text-rose-300 text-xs mb-4"></div>
+
+                <div class="mt-4 text-center text-xs text-slate-500">
+                    <p>Akun Default: <strong class="text-slate-400">admin / admin123</strong> atau <strong class="text-slate-400">opd / opd123</strong></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- ===================== LOADING OVERLAY ===================== -->
     <div class="loading-overlay" id="loadingOverlay">
         <div class="text-center">
             <div class="w-12 h-12 border-3 border-brand-500 border-t-transparent rounded-full animate-spin mx-auto mb-4" style="border-width:3px;"></div>
-            <p class="text-sm text-slate-400" id="loadingText">Memuat data...</p>
+            <p class="text-sm text-slate-400" id="loadingText">Memuat data dari Google Sheets...</p>
         </div>
     </div>
 
@@ -173,13 +227,21 @@
                 </div>
                 <div>
                     <h1 class="font-display text-lg sm:text-xl font-bold tracking-tight text-white leading-tight">SIMONDA</h1>
-                    <p class="text-[0.6rem] sm:text-[0.65rem] text-slate-500 font-medium tracking-wider uppercase leading-tight">Monitoring Data Anomali OPD</p>
+                    <p class="text-[0.6rem] sm:text-[0.65rem] text-slate-500 font-medium tracking-wider uppercase leading-tight">Monitoring Dokumen OPD</p>
                 </div>
             </div>
             <div class="flex items-center gap-3">
-                <div id="connection-status" class="flex items-center gap-2 px-3 py-1.5 rounded-full glass-light text-xs">
+                <div id="connection-status" class="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full glass-light text-xs">
                     <span class="w-2 h-2 rounded-full bg-brand-400" style="animation:dot-pulse 2s infinite;"></span>
                     <span class="text-brand-400">Terhubung</span>
+                </div>
+                <!-- User Info & Logout -->
+                <div class="flex items-center gap-2">
+                    <span id="userBadge" class="badge badge-admin text-[0.7rem] py-1 px-2.5"><i class="fa-solid fa-shield-halved mr-1"></i> Admin</span>
+                    <span id="userName" class="text-xs text-slate-400 font-semibold hidden sm:inline"></span>
+                    <button onclick="handleLogout()" class="w-9 h-9 rounded-lg glass-light flex items-center justify-center text-slate-400 hover:text-rose-400 transition" title="Logout">
+                        <i class="fa-solid fa-right-from-bracket text-sm"></i>
+                    </button>
                 </div>
             </div>
         </div>
@@ -188,10 +250,10 @@
     <!-- ===================== NAVIGASI TAB ===================== -->
     <nav class="max-w-7xl mx-auto px-4 sm:px-6 pt-6 pb-2">
         <div class="flex gap-2 overflow-x-auto pb-2" id="nav-tabs">
-            <button class="tab-btn active" onclick="switchTab('upload')">
+            <button class="tab-btn active" id="tab-btn-upload" onclick="switchTab('upload')">
                 <i class="fa-solid fa-cloud-arrow-up mr-2"></i>Upload Dokumen
             </button>
-            <button class="tab-btn" onclick="switchTab('monitoring')">
+            <button class="tab-btn" id="tab-btn-monitoring" onclick="switchTab('monitoring')">
                 <i class="fa-solid fa-chart-line mr-2"></i>Monitoring OPD
             </button>
         </div>
@@ -227,7 +289,7 @@
                             <!-- NIP -->
                             <div class="mb-5">
                                 <label class="block text-sm font-semibold text-slate-300 mb-2">
-                                    <i class="fa-solid fa-id-card mr-1 text-brand-400"></i> NIP (Operator Kepegawaian)
+                                    <i class="fa-solid fa-id-card mr-1 text-brand-400"></i> NIP
                                 </label>
                                 <div class="relative">
                                     <input type="text" id="inputNip" class="input-field pr-10" placeholder="Masukkan 18 digit NIP" maxlength="18" required autocomplete="off">
@@ -321,21 +383,20 @@
                             <li class="flex items-start gap-2"><i class="fa-solid fa-check text-brand-400 mt-0.5"></i> Pilih nama OPD dari daftar</li>
                             <li class="flex items-start gap-2"><i class="fa-solid fa-check text-brand-400 mt-0.5"></i> Masukkan NIP (18 digit)</li>
                             <li class="flex items-start gap-2"><i class="fa-solid fa-check text-brand-400 mt-0.5"></i> Upload dokumen Excel, PDF, atau JPG</li>
-                            <li class="flex items-start gap-2"><i class="fa-solid fa-check text-brand-400 mt-0.5"></i> NIP yang sudah pernah entri tidak dapat entri data kembali</li>
-                            <li class="flex items-start gap-2"><i class="fa-solid fa-check text-brand-400 mt-0.5"></i> Data tersimpan langsung ke server</li>
+                            <li class="flex items-start gap-2"><i class="fa-solid fa-check text-brand-400 mt-0.5"></i> NIP yang sudah terdaftar tidak dapat digunakan kembali</li>
+                            <li class="flex items-start gap-2"><i class="fa-solid fa-check text-brand-400 mt-0.5"></i> Data tersimpan langsung ke Google Sheets</li>
                         </ul>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- ===== TAB: MONITORING ===== -->
+        <!-- ===== TAB: MONITORING (Khusus Admin) ===== -->
         <section id="tab-monitoring" class="hidden animate-fade-up">
             <div class="mt-4">
                 <!-- Toolbar -->
                 <div class="glass rounded-2xl p-4 mb-4">
                     <div class="flex flex-col gap-3">
-                        <!-- Baris 1: Filter Tanggal & Cetak -->
                         <div class="flex flex-wrap items-center gap-3 w-full">
                             <div class="flex items-center gap-2 flex-shrink-0">
                                 <div class="relative flex-1 sm:flex-none">
@@ -359,7 +420,6 @@
                             </div>
                         </div>
                         
-                        <!-- Baris 2: Pencarian & Tipe File -->
                         <div class="flex flex-wrap items-center gap-3 w-full">
                             <div class="relative flex-1 min-w-[180px]">
                                 <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 text-sm"></i>
@@ -401,7 +461,7 @@
                                     <th>File</th>
                                     <th>Tipe</th>
                                     <th>Status</th>
-                                    <th style="width:60px;">Aksi</th>
+                                    <th id="th-action" style="width:60px;">Aksi</th>
                                 </tr>
                             </thead>
                             <tbody id="tableBody">
@@ -433,229 +493,165 @@
 // =============================================================
 // KONFIGURASI BACKEND
 // =============================================================
-// URL Google Apps Script — GANTI DENGAN URL DEPLOYMENT ANDA
-// Cara: Deploy > Web App > Copy URL, paste di bawah ini
 const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw0m2pdDRclf-jNgBcrN5gFIiUZdQ-W_P3Hw8KgRg8tO_1XoXWZkSSkfYPWbx0Aktub/exec';
+
+// =============================================================
+// KONFIGURASI AKUN PENGGUNA
+// Tambah atau ubah akun di sini
+// Role: 'admin' (akses penuh) atau 'user' (hanya upload)
+// =============================================================
+const USERS = [
+    { username: 'administrator', password: 'admin@120406', role: 'admin', name: 'Administrator' },
+    { username: 'opd', password: 'opd123', role: 'user', name: 'Operator OPD' }
+];
 // =============================================================
 
-const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
-
-const OPD_LIST = [
-    'Dinas Pendidikan',
-    'Dinas Kesehatan',
-    'Dinas Pekerjaan Umum dan Penataan Ruang',
-    'Dinas Perhubungan',
-    'Dinas Sosial',
-    'Dinas Kependudukan dan Pencatatan Sipil',
-    'Dinas Perindustrian dan Tenagakerja',
-    'Dinas Keluarga Berencana Pemberdayaan Perempuan dan Perlindungan Anak',
-    'Dinas Lingkungan Hidup',
-    'Dinas Penanaman Modal dan Pelayanan Terpadu Satu Pintu',
-    'Dinas Perumahan dan Kawasan Permukiman',
-    'Dinas Pemuda dan Olahraga',
-    'Dinas Komunikasi dan Informatika',
-    'Dinas Pertanian Perinakanan dan Ketahanan Pangan',
-    'Dinas Koperasi Usaha Mikro dan Perdagangan',
-    'Dinas Peternakan dan Kesehatan Hewan',
-    'Dinas Perpustakaan Dan Kearsipan',
-    'Dinas Pemberdayaan Masyarakat dan Desa',
-    'Dinas Kebudayaan dan Pariwisata',
-    'Badan Kepegawaian dan Pengembangan Sumber Daya Manusia',
-    'Badan Perencanaan Pembangunan Riset dan Inovasi Daerah',
-    'Badan Pengelolaan Keuangan dan Aset Daerah',
-    'Badan Pendapatan Daerah',
-    'Badan Penanggulangan Bencana Daerah',
-    'Badan Kesatuan Bangsa dan Politik',
-    'Inspektorat',
-    'Satuan Polisi Pamong Praja',
-    'UOBK RSUD',
-    'Bagian Umum - Sekretariat Daerah',
-    'Bagian Hukum - Sekretariat Daerah',
-    'Bagian Perekonomian SDA - Sekretariat Daerah',
-    'Bagian Protokol dan Komunikasi Pimpinan - Sekretariat Daerah',
-    'Bagian Pemerintahan - Sekretariat Daerah',
-    'Bagian Administrasi Pembangunan - Sekretariat Daerah',
-    'Bagian Perencana Keuangan - Sekretariat Daerah',
-    'Bagian Organisasi - Sekretariat Daerah',
-    'Bagian Kesejahteraan Rakyat - Sekretariat Daerah',
-    'Bagian Pengadaan Barang Jasa - Sekretariat Daerah',
-    'Sekretariat DPRD',
-    'Kecamatan Arosbaya',
-    'Kecamatan Klampis',
-    'Kecamatan Bangkalan',
-    'Kecamatan Burneh',
-    'Kecamatan Socah',
-    'Kecamatan Kamal',
-    'Kecamatan Labang',
-    'Kecamatan Modung',
-    'Kecamatan Tragah',
-    'Kecamatan Sepulu',
-    'Kecamatan Tanjungbumi',
-    'Kecamatan Kwanyar',
-    'Kecamatan Konang',
-    'Kecamatan Kokop',
-    'Kecamatan Tanahmerah',
-    'Kecamatan Galis',
-    'Kecamatan Geger',
-    'Kecamatan Blega',
-    'Kelurahan Tonjung',
-    'Kelurahan Bancaran',
-    'Kelurahan Pejagan',
-    'Kelurahan Demangan',
-    'Kelurahan Kraton',
-    'Kelurahan Kemayoran',
-    'Kelurahan Mlajah',
-    'Kelurahan Pangeranan',
-];
-
+const MAX_FILE_SIZE = 5 * 1024 * 1024;
+let currentUser = null;
 let sheetData = [];
 let selectedFile = null;
 let selectedFileBase64 = null;
 let nipChecking = false;
 
-// ===============================================================
-// KODE GOOGLE APPS SCRIPT (untuk referensi admin)
-// ===============================================================
-const APPS_SCRIPT_CODE = `// =============================================
-// GOOGLE APPS SCRIPT - Code.gs
-// =============================================
-// Paste kode ini di Extensions > Apps Script
-// pada Google Spreadsheet Anda
-
-const SHEET_ID = 'GANTI_DENGAN_SPREADSHEET_ID';
-const SHEET_NAME = 'Data Upload';
-const FOLDER_ID = 'GANTI_DENGAN_FOLDER_ID';
-
-function doPost(e) {
-  try {
-    const data = JSON.parse(e.postData.contents);
-
-    if (data.action === 'submit') {
-      const ss = SpreadsheetApp.openById(SHEET_ID);
-      const sheet = ss.getSheetByName(SHEET_NAME);
-      const allData = sheet.getDataRange().getValues();
-      const nipExists = allData.some((row, i) => i > 0 && row[2] && row[2].toString() === data.nip);
-
-      if (nipExists) {
-        return ContentService.createTextOutput(JSON.stringify({
-          success: false, message: 'NIP sudah terdaftar', duplicate: true
-        })).setMimeType(ContentService.MimeType.JSON);
-      }
-
-      let fileUrl = '';
-      if (data.fileBase64 && data.fileName) {
-        try {
-          const decoded = Utilities.base64Decode(data.fileBase64);
-          const blob = Utilities.newBlob(decoded, data.fileMime, data.fileName);
-          const file = DriveApp.getFolderById(FOLDER_ID).createFile(blob);
-          file.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
-          fileUrl = file.getUrl();
-        } catch (err) {
-          fileUrl = 'Gagal upload: ' + err.message;
-        }
-      }
-
-      sheet.appendRow([
-        new Date(), data.namaOpd, data.nip,
-        data.fileName || '-', data.fileType || '-',
-        fileUrl, 'Terverifikasi'
-      ]);
-
-      return ContentService.createTextOutput(JSON.stringify({
-        success: true, message: 'Data berhasil disimpan'
-      })).setMimeType(ContentService.MimeType.JSON);
-    }
-
-    if (data.action === 'checkNip') {
-      const ss = SpreadsheetApp.openById(SHEET_ID);
-      const sheet = ss.getSheetByName(SHEET_NAME);
-      const allData = sheet.getDataRange().getValues();
-      let existingOpd = '';
-      const nipExists = allData.some((row, i) => {
-        if (i > 0 && row[2] && row[2].toString() === data.nip) {
-          existingOpd = row[1] || '';
-          return true;
-        }
-        return false;
-      });
-
-      return ContentService.createTextOutput(JSON.stringify({
-        exists: nipExists, namaOpd: existingOpd
-      })).setMimeType(ContentService.MimeType.JSON);
-    }
-
-    if (data.action === 'delete') {
-      const ss = SpreadsheetApp.openById(SHEET_ID);
-      const sheet = ss.getSheetByName(SHEET_NAME);
-      const allData = sheet.getDataRange().getValues();
-
-      for (let i = allData.length - 1; i > 0; i--) {
-        if (allData[i][2] && allData[i][2].toString() === data.nip) {
-          sheet.deleteRow(i + 1);
-          return ContentService.createTextOutput(JSON.stringify({
-            success: true, message: 'Data berhasil dihapus'
-          })).setMimeType(ContentService.MimeType.JSON);
-        }
-      }
-
-      return ContentService.createTextOutput(JSON.stringify({
-        success: false, message: 'Data tidak ditemukan'
-      })).setMimeType(ContentService.MimeType.JSON);
-    }
-
-  } catch (error) {
-    return ContentService.createTextOutput(JSON.stringify({
-      success: false, message: error.toString()
-    })).setMimeType(ContentService.MimeType.JSON);
-  }
-}
-
-function doGet(e) {
-  try {
-    const ss = SpreadsheetApp.openById(SHEET_ID);
-    const sheet = ss.getSheetByName(SHEET_NAME);
-    const allData = sheet.getDataRange().getValues();
-
-    if (allData.length <= 1) {
-      return ContentService.createTextOutput(JSON.stringify([]))
-        .setMimeType(ContentService.MimeType.JSON);
-    }
-
-    allData.shift();
-    const result = allData.filter(row => row[0]).map(row => ({
-      tanggal: row[0] ? new Date(row[0]).toISOString() : '',
-      namaOpd: row[1] || '',
-      nip: row[2] ? row[2].toString() : '',
-      fileName: row[3] || '',
-      fileType: row[4] ? row[4].toLowerCase() : '',
-      fileUrl: row[5] || '',
-      status: row[6] || ''
-    }));
-
-    return ContentService.createTextOutput(JSON.stringify(result))
-      .setMimeType(ContentService.MimeType.JSON);
-  } catch (error) {
-    return ContentService.createTextOutput(JSON.stringify({ error: error.toString() }))
-      .setMimeType(ContentService.MimeType.JSON);
-  }
-}`;
+const OPD_LIST = [
+    'Dinas Pendidikan dan Kebudayaan',
+    'Dinas Kesehatan',
+    'Dinas Pekerjaan Umum dan Penataan Ruang',
+    'Dinas Perhubungan',
+    'Dinas Sosial',
+    'Dinas Kependudukan dan Pencatatan Sipil',
+    'Dinas Ketenagakerjaan',
+    'Dinas Pemberdayaan Perempuan dan Perlindungan Anak',
+    'Dinas Lingkungan Hidup',
+    'Dinas Penanaman Modal dan Pelayanan Terpadu Satu Pintu',
+    'Dinas Perumahan dan Kawasan Permukiman',
+    'Dinas Pemuda dan Olahraga',
+    'Dinas Komunikasi dan Informatika',
+    'Dinas Pertanian dan Perikanan',
+    'Dinas Perindustrian dan Perdagangan',
+    'Badan Kepegawaian Daerah',
+    'Badan Perencanaan Pembangunan Daerah',
+    'Badan Pengelolaan Keuangan dan Aset Daerah',
+    'Badan Pendapatan Daerah',
+    'Inspektorat',
+    'Sekretariat Daerah',
+    'Sekretariat DPRD',
+    'Kecamatan Kota Baru',
+    'Kecamatan Kota Timur',
+    'Kecamatan Kota Utara',
+    'Kecamatan Dumbo Raya',
+    'Kecamatan Tilongkabila'
+];
 
 // ===============================================================
-// INISIALISASI — langsung ke aplikasi
+// SISTEM LOGIN & OTENTIKASI
 // ===============================================================
 document.addEventListener('DOMContentLoaded', () => {
+    checkAuth();
     populateOpdSelect();
     setupDragDrop();
     setupNipValidation();
-    fetchSheetData(); // Langsung ambil data dari Google Sheets
 });
+
+function checkAuth() {
+    const stored = sessionStorage.getItem('simondoc_user');
+    if (stored) {
+        currentUser = JSON.parse(stored);
+        enterApp();
+    } else {
+        document.getElementById('loginScreen').style.display = 'flex';
+    }
+}
+
+function handleLogin() {
+    const username = document.getElementById('loginUsername').value.trim();
+    const password = document.getElementById('loginPassword').value;
+    const errorEl = document.getElementById('loginError');
+
+    if (!username || !password) {
+        errorEl.classList.remove('hidden');
+        errorEl.innerHTML = '<i class="fa-solid fa-circle-exclamation mr-1"></i> Username dan Password wajib diisi.';
+        return;
+    }
+
+    const user = USERS.find(u => u.username === username && u.password === password);
+
+    if (user) {
+        currentUser = user;
+        sessionStorage.setItem('simondoc_user', JSON.stringify(user));
+        errorEl.classList.add('hidden');
+        enterApp();
+        showToast(`Selamat datang, ${user.name}!`, 'success');
+    } else {
+        errorEl.classList.remove('hidden');
+        errorEl.innerHTML = '<i class="fa-solid fa-circle-exclamation mr-1"></i> Username atau Password salah.';
+    }
+}
+
+function handleLogout() {
+    currentUser = null;
+    sessionStorage.removeItem('simondoc_user');
+    document.getElementById('loginScreen').style.display = 'flex';
+    document.getElementById('loginUsername').value = '';
+    document.getElementById('loginPassword').value = '';
+    sheetData = [];
+    switchTab('upload'); // Reset ke tab upload
+}
+
+function enterApp() {
+    document.getElementById('loginScreen').style.display = 'none';
+    updateUIForRole();
+    fetchSheetData();
+}
+
+function updateUIForRole() {
+    if (!currentUser) return;
+
+    // Update Header User Info
+    document.getElementById('userName').textContent = currentUser.name;
+    const badge = document.getElementById('userBadge');
+    if (currentUser.role === 'admin') {
+        badge.className = 'badge badge-admin text-[0.7rem] py-1 px-2.5';
+        badge.innerHTML = '<i class="fa-solid fa-shield-halved mr-1"></i> Admin';
+    } else {
+        badge.className = 'badge badge-user text-[0.7rem] py-1 px-2.5';
+        badge.innerHTML = '<i class="fa-solid fa-user mr-1"></i> OPD';
+    }
+
+    // Update Tab Visibility & Table Actions
+    const monitoringTabBtn = document.getElementById('tab-btn-monitoring');
+    const thAction = document.getElementById('th-action');
+
+    if (currentUser.role === 'admin') {
+        monitoringTabBtn.style.display = 'inline-flex';
+        if(thAction) thAction.style.display = 'table-cell';
+    } else {
+        monitoringTabBtn.style.display = 'none';
+        if(thAction) thAction.style.display = 'none';
+        switchTab('upload'); // Paksa ke tab upload jika user biasa
+    }
+    
+    // Re-render tabel jika sedang di monitoring
+    renderTable();
+}
+
+function togglePasswordVisibility() {
+    const passInput = document.getElementById('loginPassword');
+    const eyeIcon = document.getElementById('eyeIcon');
+    if (passInput.type === 'password') {
+        passInput.type = 'text';
+        eyeIcon.className = 'fa-solid fa-eye-slash';
+    } else {
+        passInput.type = 'password';
+        eyeIcon.className = 'fa-solid fa-eye';
+    }
+}
 
 // ===============================================================
 // FETCH DATA DARI GOOGLE SHEETS
 // ===============================================================
 function fetchSheetData() {
-    showLoading('Memuat data...');
-
+    showLoading('Memuat data dari Google Sheets...');
     fetch(APPS_SCRIPT_URL)
     .then(r => r.json())
     .then(res => {
@@ -672,7 +668,7 @@ function fetchSheetData() {
     })
     .catch(err => {
         hideLoading();
-        showToast('Gagal memuat data. Periksa koneksi internet atau konfigurasi APPS_SCRIPT_URL.', 'error');
+        showToast('Gagal memuat data. Periksa koneksi internet.', 'error');
         sheetData = [];
         renderAll();
     });
@@ -686,15 +682,19 @@ function renderAll() {
 }
 
 // ===============================================================
-// NAVIGASI TAB
+// NAVIGASI TAB (Dengan Hak Akses)
 // ===============================================================
 function switchTab(tabName) {
-    // Sembunyikan semua konten tab (hanya section, bukan nav)
+    // Cek hak akses monitoring
+    if (tabName === 'monitoring' && currentUser && currentUser.role !== 'admin') {
+        showToast('Akses ditolak. Hanya Admin yang bisa melihat Monitoring.', 'error');
+        return;
+    }
+
     document.querySelectorAll('section[id^="tab-"]').forEach(el => {
         el.classList.add('hidden');
     });
 
-    // Tampilkan tab aktif
     const tabEl = document.getElementById('tab-' + tabName);
     if (tabEl) {
         tabEl.classList.remove('hidden');
@@ -703,7 +703,6 @@ function switchTab(tabName) {
         tabEl.classList.add('animate-fade-up');
     }
 
-    // Update tombol navigasi
     document.querySelectorAll('#nav-tabs .tab-btn').forEach((btn, i) => {
         const tabs = ['upload', 'monitoring'];
         btn.classList.toggle('active', tabs[i] === tabName);
@@ -741,7 +740,7 @@ function setupDragDrop() {
 function handleFileSelect(file) {
     const allowedExt = ['.pdf', '.xlsx', '.xls', '.jpg', '.jpeg', '.png'];
     const ext = '.' + file.name.split('.').pop().toLowerCase();
-    if (!allowedExt.includes(ext)) { showToast('Format file tidak didukung. Gunakan Excel, PDF, atau JPG/PNG.', 'error'); return; }
+    if (!allowedExt.includes(ext)) { showToast('Format file tidak didukung.', 'error'); return; }
     if (file.size > MAX_FILE_SIZE) { showToast('Ukuran file melebihi batas 5MB.', 'error'); return; }
 
     selectedFile = file;
@@ -772,11 +771,10 @@ function removeFile() {
 }
 
 // ===============================================================
-// VALIDASI NIP — CEK KE GOOGLE SHEETS
+// VALIDASI NIP
 // ===============================================================
 function setupNipValidation() {
     const nipInput = document.getElementById('inputNip');
-
     nipInput.addEventListener('input', () => {
         nipInput.value = nipInput.value.replace(/[^0-9]/g, '');
         const icon = document.getElementById('nip-status-icon');
@@ -802,49 +800,39 @@ function checkNipOnServer(nip) {
     const icon = document.getElementById('nip-status-icon');
     const hint = document.getElementById('nip-hint');
 
-    // Cek dari data cache lokal dulu
     const localMatch = sheetData.find(d => d.nip === nip);
     if (localMatch) {
-        nipInput.classList.add('error');
-        nipInput.classList.remove('valid');
-        icon.classList.remove('hidden');
-        icon.innerHTML = '<i class="fa-solid fa-circle-exclamation text-rose-400"></i>';
+        nipInput.classList.add('error'); nipInput.classList.remove('valid');
+        icon.classList.remove('hidden'); icon.innerHTML = '<i class="fa-solid fa-circle-exclamation text-rose-400"></i>';
         hint.innerHTML = `<span class="text-rose-400">NIP ini sudah terdaftar di ${localMatch.namaOpd}</span>`;
         showDuplicateModal(localMatch);
         return;
     }
 
-    // Cek ke server
-    icon.classList.remove('hidden');
-    icon.innerHTML = '<i class="fa-solid fa-spinner fa-spin text-slate-400"></i>';
+    icon.classList.remove('hidden'); icon.innerHTML = '<i class="fa-solid fa-spinner fa-spin text-slate-400"></i>';
     hint.innerHTML = '<span class="text-slate-500">Memeriksa NIP ke server...</span>';
     nipChecking = true;
 
     fetch(APPS_SCRIPT_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'text/plain' },
+        method: 'POST', headers: { 'Content-Type': 'text/plain' },
         body: JSON.stringify({ action: 'checkNip', nip: nip })
     })
     .then(r => r.json())
     .then(res => {
         nipChecking = false;
         if (res.exists) {
-            nipInput.classList.add('error');
-            nipInput.classList.remove('valid');
+            nipInput.classList.add('error'); nipInput.classList.remove('valid');
             icon.innerHTML = '<i class="fa-solid fa-circle-exclamation text-rose-400"></i>';
             hint.innerHTML = `<span class="text-rose-400">NIP ini sudah terdaftar di ${res.namaOpd || 'Spreadsheet'}</span>`;
             showDuplicateModal({ nip: nip, namaOpd: res.namaOpd || 'Data di Spreadsheet' });
         } else {
-            nipInput.classList.remove('error');
-            nipInput.classList.add('valid');
+            nipInput.classList.remove('error'); nipInput.classList.add('valid');
             icon.innerHTML = '<i class="fa-solid fa-circle-check text-brand-400"></i>';
             hint.innerHTML = '<span class="text-brand-400">NIP tersedia, dapat digunakan</span>';
         }
     })
     .catch(() => {
-        nipChecking = false;
-        nipInput.classList.remove('error');
-        nipInput.classList.add('valid');
+        nipChecking = false; nipInput.classList.remove('error'); nipInput.classList.add('valid');
         icon.innerHTML = '<i class="fa-solid fa-circle-check text-brand-400"></i>';
         hint.innerHTML = '<span class="text-brand-400">NIP tersedia</span>';
     });
@@ -860,49 +848,33 @@ function showDuplicateModal(existingData) {
                 <i class="fa-solid fa-triangle-exclamation text-rose-400 text-2xl"></i>
             </div>
             <h3 class="font-display text-xl font-bold text-white mb-1">NIP Sudah Terdaftar</h3>
-            <p class="text-sm text-slate-400">NIP yang Anda masukkan sudah pernah digunakan untuk upload dokumen dan tidak diperbolehkan input lebih dari sekali.</p>
+            <p class="text-sm text-slate-400">NIP yang Anda masukkan sudah pernah digunakan dan tidak diperbolehkan input lebih dari sekali.</p>
         </div>
         <div class="bg-surface-900 rounded-xl p-4 mb-5 border border-surface-600">
             <div class="space-y-3 text-sm">
-                <div class="flex justify-between items-center">
-                    <span class="text-slate-400">NIP</span>
-                    <span class="font-mono font-semibold text-white">${formatNip(existingData.nip)}</span>
-                </div>
-                <div class="flex justify-between items-center">
-                    <span class="text-slate-400">OPD</span>
-                    <span class="font-semibold text-white text-right max-w-[200px] truncate" title="${existingData.namaOpd}">${existingData.namaOpd || '-'}</span>
-                </div>
+                <div class="flex justify-between items-center"><span class="text-slate-400">NIP</span><span class="font-mono font-semibold text-white">${formatNip(existingData.nip)}</span></div>
+                <div class="flex justify-between items-center"><span class="text-slate-400">OPD</span><span class="font-semibold text-white text-right max-w-[200px] truncate" title="${existingData.namaOpd}">${existingData.namaOpd || '-'}</span></div>
             </div>
         </div>
-        <p class="text-xs text-amber-400 mb-5 text-center flex items-start gap-1.5 justify-center">
-            <i class="fa-solid fa-info-circle mt-0.5"></i>
-            <span>Satu NIP hanya diperbolehkan mengupload dokumen satu kali sesuai ketentuan.</span>
-        </p>
-        <button onclick="closeModal()" class="w-full py-3 rounded-xl font-bold text-white bg-rose-600 hover:bg-rose-500 transition">
-            <i class="fa-solid fa-xmark mr-1"></i> Tutup
-        </button>
+        <p class="text-xs text-amber-400 mb-5 text-center flex items-start gap-1.5 justify-center"><i class="fa-solid fa-info-circle mt-0.5"></i><span>Satu NIP hanya diperbolehkan mengupload dokumen satu kali.</span></p>
+        <button onclick="closeModal()" class="w-full py-3 rounded-xl font-bold text-white bg-rose-600 hover:bg-rose-500 transition"><i class="fa-solid fa-xmark mr-1"></i> Tutup</button>
     `;
     showModal(content);
 }
 
 // ===============================================================
-// SUBMIT FORM KE GOOGLE SHEETS
+// SUBMIT FORM
 // ===============================================================
 function handleSubmit() {
     const opd = document.getElementById('inputOpd').value.trim();
     const nip = document.getElementById('inputNip').value.trim();
 
-    if (!opd) { showToast('Silakan pilih nama OPD.', 'error'); document.getElementById('inputOpd').focus(); return; }
-    if (!nip || nip.length !== 18) { showToast('NIP harus terdiri dari 18 digit angka.', 'error'); document.getElementById('inputNip').focus(); return; }
-    if (!selectedFile) { showToast('Silakan upload dokumen terlebih dahulu.', 'error'); return; }
-    if (!selectedFileBase64) { showToast('File masih diproses, harap tunggu sebentar...', 'warning'); return; }
+    if (!opd) { showToast('Silakan pilih nama OPD.', 'error'); return; }
+    if (!nip || nip.length !== 18) { showToast('NIP harus 18 digit.', 'error'); return; }
+    if (!selectedFile) { showToast('Silakan upload dokumen.', 'error'); return; }
+    if (!selectedFileBase64) { showToast('File masih diproses, harap tunggu...', 'warning'); return; }
     if (nipChecking) { showToast('Sedang memeriksa NIP, harap tunggu...', 'warning'); return; }
-
-    // Cek duplikat dari cache
-    if (sheetData.find(d => d.nip === nip)) {
-        showDuplicateModal(sheetData.find(d => d.nip === nip));
-        return;
-    }
+    if (sheetData.find(d => d.nip === nip)) { showDuplicateModal(sheetData.find(d => d.nip === nip)); return; }
 
     const btn = document.getElementById('btnSubmit');
     const btnText = document.getElementById('btnText');
@@ -911,35 +883,27 @@ function handleSubmit() {
 
     const ext = '.' + selectedFile.name.split('.').pop().toLowerCase();
     const payload = {
-        action: 'submit',
-        namaOpd: opd,
-        nip: nip,
-        fileName: selectedFile.name,
-        fileType: getFileCategory(ext),
-        fileMime: selectedFile.type,
-        fileBase64: selectedFileBase64
+        action: 'submit', namaOpd: opd, nip: nip,
+        fileName: selectedFile.name, fileType: getFileCategory(ext),
+        fileMime: selectedFile.type, fileBase64: selectedFileBase64
     };
 
     fetch(APPS_SCRIPT_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'text/plain' },
+        method: 'POST', headers: { 'Content-Type': 'text/plain' },
         body: JSON.stringify(payload)
     })
     .then(r => r.json())
     .then(res => {
         btn.disabled = false;
         btnText.innerHTML = '<i class="fa-solid fa-paper-plane mr-1"></i> Kirim Dokumen';
-
         if (res.success) {
-            showToast('Dokumen berhasil diupload dan disimpan ke Google Sheets!', 'success');
-            // Reset form
+            showToast('Dokumen berhasil diupload!', 'success');
             document.getElementById('inputOpd').value = '';
             document.getElementById('inputNip').value = '';
             document.getElementById('inputNip').classList.remove('valid', 'error');
             document.getElementById('nip-status-icon').classList.add('hidden');
             document.getElementById('nip-hint').innerHTML = '<span class="text-slate-500">Format: 18 digit angka</span>';
             removeFile();
-            // Refresh data dari Sheets
             fetchSheetData();
         } else if (res.duplicate) {
             showDuplicateModal({ nip: nip, namaOpd: 'Data di Spreadsheet' });
@@ -950,21 +914,24 @@ function handleSubmit() {
     .catch(err => {
         btn.disabled = false;
         btnText.innerHTML = '<i class="fa-solid fa-paper-plane mr-1"></i> Kirim Dokumen';
-        showToast('Gagal mengirim data. Periksa koneksi internet Anda.', 'error');
+        showToast('Gagal mengirim data. Periksa koneksi internet.', 'error');
     });
 }
 
 // ===============================================================
-// HAPUS DATA DARI SHEETS
+// HAPUS DATA
 // ===============================================================
 function deleteEntry(nip) {
+    if (!currentUser || currentUser.role !== 'admin') {
+        showToast('Hanya Admin yang dapat menghapus data.', 'error'); return;
+    }
     const content = `
         <div class="text-center mb-5">
             <div class="w-16 h-16 mx-auto rounded-full bg-amber-500/15 flex items-center justify-center mb-4">
                 <i class="fa-solid fa-trash-can text-amber-400 text-2xl"></i>
             </div>
             <h3 class="font-display text-lg font-bold text-white mb-1">Hapus Data?</h3>
-            <p class="text-sm text-slate-400">Data NIP <span class="font-mono text-white">${formatNip(nip)}</span> akan dihapus secara permanen dari Spreadsheet.</p>
+            <p class="text-sm text-slate-400">Data NIP <span class="font-mono text-white">${formatNip(nip)}</span> akan dihapus permanen.</p>
         </div>
         <div class="flex gap-3">
             <button onclick="closeModal()" class="flex-1 py-3 rounded-xl font-semibold glass-light text-slate-300 hover:text-white transition">Batal</button>
@@ -976,107 +943,22 @@ function deleteEntry(nip) {
 
 function confirmDelete(nip) {
     const btn = document.getElementById('btnDeleteConfirm');
-    btn.disabled = true;
-    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-1"></i> Menghapus...';
-
+    btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-1"></i> Menghapus...';
     fetch(APPS_SCRIPT_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'text/plain' },
+        method: 'POST', headers: { 'Content-Type': 'text/plain' },
         body: JSON.stringify({ action: 'delete', nip: nip })
     })
     .then(r => r.json())
     .then(res => {
         closeModal();
-        if (res.success) {
-            showToast('Data berhasil dihapus dari Spreadsheet.', 'success');
-            fetchSheetData();
-        } else {
-            showToast('Gagal menghapus: ' + res.message, 'error');
-        }
+        if (res.success) { showToast('Data berhasil dihapus.', 'success'); fetchSheetData(); }
+        else { showToast('Gagal menghapus: ' + res.message, 'error'); }
     })
-    .catch(() => {
-        closeModal();
-        showToast('Gagal menghapus. Periksa koneksi internet.', 'error');
-    });
+    .catch(() => { closeModal(); showToast('Gagal menghapus.', 'error'); });
 }
 
 // ===============================================================
-// RENDER STATISTIK
-// ===============================================================
-function renderStats() {
-    const total = sheetData.length;
-    const opds = new Set(sheetData.map(d => d.namaOpd)).size;
-    const pdfs = sheetData.filter(d => d.fileType === 'pdf').length;
-    const excels = sheetData.filter(d => d.fileType === 'excel').length;
-
-    animateCounter('stat-total', total);
-    animateCounter('stat-opd', opds);
-    animateCounter('stat-pdf', pdfs);
-    animateCounter('stat-excel', excels);
-}
-
-function renderRecentUploads() {
-    const container = document.getElementById('recent-uploads');
-    const recent = [...sheetData].sort((a, b) => new Date(b.tanggal) - new Date(a.tanggal)).slice(0, 5);
-
-    if (recent.length === 0) {
-        container.innerHTML = '<p class="text-xs text-slate-500 text-center py-4">Belum ada data upload</p>';
-        return;
-    }
-
-    container.innerHTML = recent.map(d => {
-        const icon = d.fileType === 'pdf' ? 'fa-file-pdf text-rose-400' :
-                     d.fileType === 'excel' ? 'fa-file-excel text-brand-400' : 'fa-file-image text-amber-400';
-        return `<div class="flex items-center gap-3 p-2.5 rounded-lg bg-surface-900/50 border border-surface-700/50">
-            <div class="w-9 h-9 rounded-lg bg-surface-700 flex items-center justify-center flex-shrink-0">
-                <i class="fa-solid ${icon} text-sm"></i>
-            </div>
-            <div class="min-w-0 flex-1">
-                <p class="text-xs font-semibold text-white truncate">${d.namaOpd}</p>
-                <p class="text-[0.65rem] text-slate-500">${getTimeAgo(d.tanggal)} &bull; ${d.fileName || '-'}</p>
-            </div>
-        </div>`;
-    }).join('');
-}
-
-// ===============================================================
-// MODAL & TOAST
-// ===============================================================
-function showModal(content) {
-    document.getElementById('modalContent').innerHTML = content;
-    document.getElementById('modalOverlay').classList.add('show');
-    document.body.style.overflow = 'hidden';
-}
-
-function closeModal(e) {
-    if (e && e.target && e.target !== document.getElementById('modalOverlay')) return;
-    document.getElementById('modalOverlay').classList.remove('show');
-    document.body.style.overflow = '';
-}
-
-function showToast(message, type = 'success') {
-    const container = document.getElementById('toast-container');
-    const toast = document.createElement('div');
-    toast.className = `toast toast-${type}`;
-    const icon = type === 'success' ? 'fa-circle-check' : type === 'error' ? 'fa-circle-xmark' : 'fa-triangle-exclamation';
-    toast.innerHTML = `<i class="fa-solid ${icon} text-lg flex-shrink-0"></i><span class="flex-1">${message}</span><button onclick="this.parentElement.remove()" class="flex-shrink-0 opacity-60 hover:opacity-100 transition"><i class="fa-solid fa-xmark"></i></button>`;
-    container.appendChild(toast);
-    setTimeout(() => { toast.classList.add('animate-toast-out'); setTimeout(() => toast.remove(), 300); }, 4000);
-}
-
-// ===============================================================
-// LOADING
-// ===============================================================
-function showLoading(text) {
-    document.getElementById('loadingText').textContent = text || 'Memuat...';
-    document.getElementById('loadingOverlay').classList.add('show');
-}
-
-function hideLoading() {
-    document.getElementById('loadingOverlay').classList.remove('show');
-}
-// ===============================================================
-// FILTER DATA (PUSAT)
+// FILTER & RENDER
 // ===============================================================
 function getFilteredData() {
     const search = (document.getElementById('searchInput')?.value || '').toLowerCase();
@@ -1085,35 +967,21 @@ function getFilteredData() {
     const endDate = document.getElementById('filterEndDate')?.value || '';
 
     let filtered = sheetData.filter(d => {
-        // Filter Pencarian
         const matchSearch = !search || d.namaOpd.toLowerCase().includes(search) || d.nip.includes(search);
-        // Filter Tipe File
         const matchType = !filterType || d.fileType === filterType;
-        
-        // Filter Tanggal
         let matchDate = true;
         if (d.tanggal) {
-            const dateOnly = d.tanggal.slice(0, 10); // Ambil YYYY-MM-DD saja
+            const dateOnly = d.tanggal.slice(0, 10);
             if (startDate && dateOnly < startDate) matchDate = false;
             if (endDate && dateOnly > endDate) matchDate = false;
-        } else if (startDate || endDate) {
-            matchDate = false;
-        }
-
+        } else if (startDate || endDate) { matchDate = false; }
         return matchSearch && matchType && matchDate;
     });
-
-    // Urutkan berdasarkan tanggal terbaru
     return filtered.sort((a, b) => new Date(b.tanggal) - new Date(a.tanggal));
 }
 
-// Panggil saat user mengubah filter
-function applyFilters() {
-    renderTable();
-    renderOpdChart();
-}
+function applyFilters() { renderTable(); renderOpdChart(); }
 
-// Reset semua filter ke kosong
 function resetFilters() {
     document.getElementById('searchInput').value = '';
     document.getElementById('filterType').value = '';
@@ -1122,16 +990,34 @@ function resetFilters() {
     applyFilters();
 }
 
-// ===============================================================
-// RENDER TABEL MONITORING (MENGGUNAKAN DATA FILTER)
-// ===============================================================
+function renderStats() {
+    const total = sheetData.length;
+    const opds = new Set(sheetData.map(d => d.namaOpd)).size;
+    const pdfs = sheetData.filter(d => d.fileType === 'pdf').length;
+    const excels = sheetData.filter(d => d.fileType === 'excel').length;
+    animateCounter('stat-total', total); animateCounter('stat-opd', opds);
+    animateCounter('stat-pdf', pdfs); animateCounter('stat-excel', excels);
+}
+
+function renderRecentUploads() {
+    const container = document.getElementById('recent-uploads');
+    const recent = [...sheetData].sort((a, b) => new Date(b.tanggal) - new Date(a.tanggal)).slice(0, 5);
+    if (recent.length === 0) { container.innerHTML = '<p class="text-xs text-slate-500 text-center py-4">Belum ada data upload</p>'; return; }
+    container.innerHTML = recent.map(d => {
+        const icon = d.fileType === 'pdf' ? 'fa-file-pdf text-rose-400' : d.fileType === 'excel' ? 'fa-file-excel text-brand-400' : 'fa-file-image text-amber-400';
+        return `<div class="flex items-center gap-3 p-2.5 rounded-lg bg-surface-900/50 border border-surface-700/50">
+            <div class="w-9 h-9 rounded-lg bg-surface-700 flex items-center justify-center flex-shrink-0"><i class="fa-solid ${icon} text-sm"></i></div>
+            <div class="min-w-0 flex-1"><p class="text-xs font-semibold text-white truncate">${d.namaOpd}</p><p class="text-[0.65rem] text-slate-500">${getTimeAgo(d.tanggal)} &bull; ${d.fileName || '-'}</p></div></div>`;
+    }).join('');
+}
+
 function renderTable() {
     const tbody = document.getElementById('tableBody');
     const filtered = getFilteredData();
+    const isAdmin = currentUser && currentUser.role === 'admin';
 
     if (filtered.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="8" class="text-center text-slate-500 py-12">
-            <i class="fa-solid fa-filter-circle-xmark text-3xl mb-3 block text-slate-600"></i>Tidak ada data sesuai filter</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="8" class="text-center text-slate-500 py-12"><i class="fa-solid fa-filter-circle-xmark text-3xl mb-3 block text-slate-600"></i>Tidak ada data sesuai filter</td></tr>`;
         return;
     }
 
@@ -1140,6 +1026,11 @@ function renderTable() {
         const badgeClass = d.fileType === 'pdf' ? 'badge-pdf' : d.fileType === 'excel' ? 'badge-excel' : 'badge-image';
         const badgeIcon = d.fileType === 'pdf' ? 'fa-file-pdf' : d.fileType === 'excel' ? 'fa-file-excel' : 'fa-file-image';
         const badgeLabel = d.fileType === 'pdf' ? 'PDF' : d.fileType === 'excel' ? 'Excel' : 'Gambar';
+        
+        // Tombol Aksi Hanya Untuk Admin
+        const actionBtn = isAdmin ? 
+            `<button onclick="deleteEntry('${d.nip}')" class="w-8 h-8 rounded-lg bg-rose-500/10 flex items-center justify-center text-rose-400 hover:bg-rose-500/20 transition" title="Hapus"><i class="fa-solid fa-trash-can text-xs"></i></button>` : 
+            `<span class="text-xs text-slate-600">-</span>`;
 
         return `<tr class="animate-slide-in" style="animation-delay:${Math.min(i * 30, 300)}ms">
             <td class="text-slate-500 font-mono text-xs">${i + 1}</td>
@@ -1149,49 +1040,27 @@ function renderTable() {
             <td class="text-xs text-slate-300 max-w-[150px] truncate" title="${d.fileName}">${d.fileName || '-'}</td>
             <td><span class="badge ${badgeClass}"><i class="fa-solid ${badgeIcon}"></i> ${badgeLabel}</span></td>
             <td><span class="badge badge-active"><i class="fa-solid fa-circle-check"></i> ${d.status || 'Terverifikasi'}</span></td>
-            <td>
-                <button onclick="deleteEntry('${d.nip}')" class="w-8 h-8 rounded-lg bg-rose-500/10 flex items-center justify-center text-rose-400 hover:bg-rose-500/20 transition" title="Hapus">
-                    <i class="fa-solid fa-trash-can text-xs"></i>
-                </button>
-            </td>
+            <td>${actionBtn}</td>
         </tr>`;
     }).join('');
 }
 
-// ===============================================================
-// RENDER CHART OPD (MENGGUNAKAN DATA FILTER)
-// ===============================================================
 function renderOpdChart() {
     const container = document.getElementById('opd-bars');
     const filtered = getFilteredData();
     const opdCount = {};
-
     filtered.forEach(d => {
-        const name = d.namaOpd;
-        const short = name.replace('Dinas ', 'D. ').replace('Badan ', 'B. ').replace('Sekretariat ', 'Sek. ').replace('Kecamatan ', 'Kec. ');
+        const short = d.namaOpd.replace('Dinas ', 'D. ').replace('Badan ', 'B. ').replace('Sekretariat ', 'Sek. ').replace('Kecamatan ', 'Kec. ');
         opdCount[short] = (opdCount[short] || 0) + 1;
     });
-
     const entries = Object.entries(opdCount).sort((a, b) => b[1] - a[1]);
     const maxCount = entries.length ? entries[0][1] : 1;
-
-    if (entries.length === 0) {
-        container.innerHTML = '<p class="text-xs text-slate-500 text-center py-4">Tidak ada data untuk ditampilkan</p>';
-        return;
-    }
-
-    const colors = ['from-brand-600 to-brand-400', 'from-teal-600 to-teal-400', 'from-emerald-600 to-emerald-400', 'from-cyan-600 to-cyan-400', 'from-amber-600 to-amber-400', 'from-orange-600 to-orange-400', 'from-lime-600 to-lime-400'];
-
+    if (entries.length === 0) { container.innerHTML = '<p class="text-xs text-slate-500 text-center py-4">Tidak ada data</p>'; return; }
+    const colors = ['from-brand-600 to-brand-400', 'from-teal-600 to-teal-400', 'from-emerald-600 to-emerald-400', 'from-cyan-600 to-cyan-400', 'from-amber-600 to-amber-400'];
     container.innerHTML = entries.map(([name, count]) => {
         const pct = Math.max(5, (count / maxCount) * 100);
         const color = colors[Math.abs(hashStr(name)) % colors.length];
-        return `<div class="flex items-center gap-3">
-            <span class="text-xs text-slate-400 w-36 sm:w-44 truncate flex-shrink-0 text-right" title="${name}">${name}</span>
-            <div class="flex-1 bg-surface-800 rounded-lg overflow-hidden">
-                <div class="opd-bar bg-gradient-to-r ${color} animate-bar-grow" style="width:${pct}%"></div>
-            </div>
-            <span class="text-xs font-bold text-white w-6 text-center">${count}</span>
-        </div>`;
+        return `<div class="flex items-center gap-3"><span class="text-xs text-slate-400 w-36 sm:w-44 truncate flex-shrink-0 text-right" title="${name}">${name}</span><div class="flex-1 bg-surface-800 rounded-lg overflow-hidden"><div class="opd-bar bg-gradient-to-r ${color} animate-bar-grow" style="width:${pct}%"></div></div><span class="text-xs font-bold text-white w-6 text-center">${count}</span></div>`;
     }).join('');
 }
 
@@ -1199,11 +1068,9 @@ function renderOpdChart() {
 // CETAK REKAP
 // ===============================================================
 function printRecap() {
+    if (!currentUser || currentUser.role !== 'admin') { showToast('Hanya Admin yang dapat mencetak.', 'error'); return; }
     const filteredData = getFilteredData();
-    if (filteredData.length === 0) {
-        showToast('Tidak ada data untuk dicetak berdasarkan filter saat ini.', 'warning');
-        return;
-    }
+    if (filteredData.length === 0) { showToast('Tidak ada data untuk dicetak.', 'warning'); return; }
 
     const startDateVal = document.getElementById('filterStartDate').value;
     const endDateVal = document.getElementById('filterEndDate').value;
@@ -1212,187 +1079,47 @@ function printRecap() {
     else if (startDateVal) periodText = `Mulai ${formatDateID(startDateVal)}`;
     else if (endDateVal) periodText = `Sampai ${formatDateID(endDateVal)}`;
 
-    // Hitung rekap OPD
     const opdSummary = {};
-    filteredData.forEach(d => {
-        opdSummary[d.namaOpd] = (opdSummary[d.namaOpd] || 0) + 1;
-    });
+    filteredData.forEach(d => { opdSummary[d.namaOpd] = (opdSummary[d.namaOpd] || 0) + 1; });
     const summaryEntries = Object.entries(opdSummary).sort((a, b) => b[1] - a[1]);
 
-    // Generate Baris Tabel Detail
-    let tableRows = filteredData.map((d, i) => `
-        <tr>
-            <td style="text-align:center;">${i + 1}</td>
-            <td>${formatTanggal(d.tanggal)}</td>
-            <td>${d.namaOpd}</td>
-            <td>${formatNip(d.nip)}</td>
-            <td>${d.fileName || '-'}</td>
-            <td style="text-align:center;">${d.fileType.toUpperCase()}</td>
-            <td style="text-align:center;">${d.status || 'Terverifikasi'}</td>
-        </tr>
-    `).join('');
+    let tableRows = filteredData.map((d, i) => `<tr><td style="text-align:center;">${i+1}</td><td>${formatTanggal(d.tanggal)}</td><td>${d.namaOpd}</td><td>${formatNip(d.nip)}</td><td>${d.fileName||'-'}</td><td style="text-align:center;">${d.fileType.toUpperCase()}</td><td style="text-align:center;">${d.status||'Terverifikasi'}</td></tr>`).join('');
+    let summaryRows = summaryEntries.map(([name, count]) => `<tr><td>${name}</td><td style="text-align:right; font-weight:bold;">${count} Dokumen</td></tr>`).join('');
 
-    // Generate Baris Tabel Rekap OPD
-    let summaryRows = summaryEntries.map(([name, count]) => `
-        <tr>
-            <td>${name}</td>
-            <td style="text-align:right; font-weight:bold;">${count} Dokumen</td>
-        </tr>
-    `).join('');
-
-    // Buat Halaman Cetak
-    const printHtml = `
-        <!DOCTYPE html>
-        <html>
-        <head>
-            <title>Cetak Rekap SIMONDOC</title>
-            <style>
-                body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 20px; color: #1e293b; }
-                h2 { text-align: center; margin-bottom: 5px; text-transform: uppercase; letter-spacing: 2px; }
-                .period { text-align: center; margin-bottom: 20px; font-size: 14px; color: #64748b; }
-                table { width: 100%; border-collapse: collapse; margin-bottom: 30px; font-size: 12px; }
-                th, td { border: 1px solid #cbd5e1; padding: 8px 10px; }
-                th { background-color: #f1f5f9; text-align: left; font-weight: 600; }
-                .summary-table { width: 50%; margin-left: auto; margin-right: auto; }
-                .summary-table td { font-size: 13px; }
-                .divider { border-top: 2px solid #10b981; margin: 30px 0; }
-                .footer { text-align: right; margin-top: 50px; font-size: 13px; }
-                @media print {
-                    body { margin: 0; }
-                    table { page-break-inside: auto; }
-                    tr { page-break-inside: avoid; page-break-after: auto; }
-                }
-            </style>
-        </head>
-        <body>
-            <h2>Rekapitulasi Upload Dokumen OPD</h2>
-            <div class="period">Periode: ${periodText} | Total Data: ${filteredData.length} Dokumen</div>
-            
-            <h4 style="margin-bottom:10px;">Detail Upload:</h4>
-            <table>
-                <thead>
-                    <tr>
-                        <th style="width:40px; text-align:center;">No</th>
-                        <th>Tanggal</th>
-                        <th>Nama OPD</th>
-                        <th>NIP</th>
-                        <th>Nama File</th>
-                        <th>Tipe</th>
-                        <th>Status</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    ${tableRows}
-                </tbody>
-            </table>
-
-            <div class="divider"></div>
-
-            <h4 style="text-align:center; margin-bottom:10px;">Rekapitulasi Per OPD</h4>
-            <table class="summary-table">
-                <thead>
-                    <tr>
-                        <th>Nama OPD</th>
-                        <th style="text-align:right;">Jumlah</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    ${summaryRows}
-                </tbody>
-            </table>
-
-            <div class="footer">
-                <p>Dicetak pada: ${new Date().toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</p>
-            </div>
-
-            <script>
-                // Otomatis memunculkan dialog cetak saat halaman dibuka
-                window.onload = function() { window.print(); }
-            <\/script>
-        </body>
-        </html>
-    `;
-
-    // Buka di tab baru
+    const printHtml = `<!DOCTYPE html><html><head><title>Cetak Rekap SIMONDA</title><style>body{font-family:'Segoe UI',sans-serif;margin:20px;color:#1e293b;}h2{text-align:center;margin-bottom:5px;text-transform:uppercase;letter-spacing:2px;}.period{text-align:center;margin-bottom:20px;font-size:14px;color:#64748b;}table{width:100%;border-collapse:collapse;margin-bottom:30px;font-size:12px;}th,td{border:1px solid #cbd5e1;padding:8px 10px;}th{background-color:#f1f5f9;text-align:left;font-weight:600;}.summary-table{width:50%;margin-left:auto;margin-right:auto;}.divider{border-top:2px solid #10b981;margin:30px 0;}.footer{text-align:right;margin-top:50px;font-size:13px;}</style></head><body><h2>Rekapitulasi Upload Dokumen OPD</h2><div class="period">Periode: ${periodText} | Total Data: ${filteredData.length} Dokumen</div><h4 style="margin-bottom:10px;">Detail Upload:</h4><table><thead><tr><th style="width:40px;text-align:center;">No</th><th>Tanggal</th><th>Nama OPD</th><th>NIP</th><th>Nama File</th><th>Tipe</th><th>Status</th></tr></thead><tbody>${tableRows}</tbody></table><div class="divider"></div><h4 style="text-align:center;margin-bottom:10px;">Rekapitulasi Per OPD</h4><table class="summary-table"><thead><tr><th>Nama OPD</th><th style="text-align:right;">Jumlah</th></tr></thead><tbody>${summaryRows}</tbody></table><div class="footer"><p>Dicetak pada: ${new Date().toLocaleDateString('id-ID',{weekday:'long',year:'numeric',month:'long',day:'numeric'})}</p></div><script>window.onload=function(){window.print();}<\/script></body></html>`;
+    
     const printWindow = window.open('', '_blank');
     printWindow.document.write(printHtml);
     printWindow.document.close();
 }
 
-// Format tanggal untuk header cetak (lebih formal)
-function formatDateID(dateStr) {
-    if (!dateStr) return '-';
-    const d = new Date(dateStr + 'T00:00:00');
-    return d.toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
+// ===============================================================
+// MODAL & TOAST & LOADING
+// ===============================================================
+function showModal(content) { document.getElementById('modalContent').innerHTML = content; document.getElementById('modalOverlay').classList.add('show'); document.body.style.overflow = 'hidden'; }
+function closeModal(e) { if (e && e.target && e.target !== document.getElementById('modalOverlay')) return; document.getElementById('modalOverlay').classList.remove('show'); document.body.style.overflow = ''; }
+function showToast(message, type = 'success') {
+    const container = document.getElementById('toast-container');
+    const toast = document.createElement('div'); toast.className = `toast toast-${type}`;
+    const icon = type === 'success' ? 'fa-circle-check' : type === 'error' ? 'fa-circle-xmark' : 'fa-triangle-exclamation';
+    toast.innerHTML = `<i class="fa-solid ${icon} text-lg flex-shrink-0"></i><span class="flex-1">${message}</span><button onclick="this.parentElement.remove()" class="flex-shrink-0 opacity-60 hover:opacity-100 transition"><i class="fa-solid fa-xmark"></i></button>`;
+    container.appendChild(toast);
+    setTimeout(() => { toast.classList.add('animate-toast-out'); setTimeout(() => toast.remove(), 300); }, 4000);
 }
+function showLoading(text) { document.getElementById('loadingText').textContent = text || 'Memuat...'; document.getElementById('loadingOverlay').classList.add('show'); }
+function hideLoading() { document.getElementById('loadingOverlay').classList.remove('show'); }
+
 // ===============================================================
 // UTILITAS
 // ===============================================================
-function getFileCategory(ext) {
-    if (['.pdf'].includes(ext)) return 'pdf';
-    if (['.xlsx', '.xls'].includes(ext)) return 'excel';
-    if (['.jpg', '.jpeg', '.png'].includes(ext)) return 'image';
-    return 'unknown';
-}
-
-function formatFileSize(bytes) {
-    if (bytes === 0) return '0 B';
-    const k = 1024;
-    const sizes = ['B', 'KB', 'MB', 'GB'];
-    const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
-}
-
-function formatTanggal(isoString) {
-    if (!isoString) return '-';
-    const d = new Date(isoString);
-    if (isNaN(d.getTime())) return '-';
-    return d.toLocaleDateString('id-ID', { day:'2-digit', month:'short', year:'numeric', hour:'2-digit', minute:'2-digit' });
-}
-
-function formatNip(nip) {
-    if (!nip || nip.length < 18) return nip || '-';
-    return nip.slice(0,8) + ' ' + nip.slice(8,14) + ' ' + nip.slice(14,15) + ' ' + nip.slice(15,17) + ' ' + nip.slice(17);
-}
-
-function getTimeAgo(isoString) {
-    if (!isoString) return '-';
-    const now = new Date();
-    const then = new Date(isoString);
-    if (isNaN(then.getTime())) return '-';
-    const diff = Math.floor((now - then) / 1000);
-    if (diff < 60) return 'Baru saja';
-    if (diff < 3600) return Math.floor(diff / 60) + ' menit lalu';
-    if (diff < 86400) return Math.floor(diff / 3600) + ' jam lalu';
-    if (diff < 604800) return Math.floor(diff / 86400) + ' hari lalu';
-    return formatTanggal(isoString);
-}
-
-function hashStr(str) {
-    let hash = 0;
-    for (let i = 0; i < str.length; i++) {
-        const char = str.charCodeAt(i);
-        hash = ((hash << 5) - hash) + char;
-        hash |= 0;
-    }
-    return hash;
-}
-
-function animateCounter(elId, target) {
-    const el = document.getElementById(elId);
-    const current = parseInt(el.textContent) || 0;
-    if (current === target) { el.textContent = target; return; }
-    const duration = 600;
-    const start = performance.now();
-    function tick(now) {
-        const elapsed = now - start;
-        const progress = Math.min(elapsed / duration, 1);
-        const eased = 1 - Math.pow(1 - progress, 3);
-        el.textContent = Math.round(current + (target - current) * eased);
-        if (progress < 1) requestAnimationFrame(tick);
-    }
-    requestAnimationFrame(tick);
-}
+function getFileCategory(ext) { if (['.pdf'].includes(ext)) return 'pdf'; if (['.xlsx', '.xls'].includes(ext)) return 'excel'; if (['.jpg', '.jpeg', '.png'].includes(ext)) return 'image'; return 'unknown'; }
+function formatFileSize(bytes) { if (bytes === 0) return '0 B'; const k = 1024; const sizes = ['B', 'KB', 'MB', 'GB']; const i = Math.floor(Math.log(bytes) / Math.log(k)); return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i]; }
+function formatTanggal(isoString) { if (!isoString) return '-'; const d = new Date(isoString); if (isNaN(d.getTime())) return '-'; return d.toLocaleDateString('id-ID', { day:'2-digit', month:'short', year:'numeric', hour:'2-digit', minute:'2-digit' }); }
+function formatNip(nip) { if (!nip || nip.length < 18) return nip || '-'; return nip.slice(0,8) + ' ' + nip.slice(8,14) + ' ' + nip.slice(14,15) + ' ' + nip.slice(15,17) + ' ' + nip.slice(17); }
+function getTimeAgo(isoString) { if (!isoString) return '-'; const now = new Date(); const then = new Date(isoString); if (isNaN(then.getTime())) return '-'; const diff = Math.floor((now - then) / 1000); if (diff < 60) return 'Baru saja'; if (diff < 3600) return Math.floor(diff / 60) + ' menit lalu'; if (diff < 86400) return Math.floor(diff / 3600) + ' jam lalu'; if (diff < 604800) return Math.floor(diff / 86400) + ' hari lalu'; return formatTanggal(isoString); }
+function hashStr(str) { let hash = 0; for (let i = 0; i < str.length; i++) { const char = str.charCodeAt(i); hash = ((hash << 5) - hash) + char; hash |= 0; } return hash; }
+function formatDateID(dateStr) { if (!dateStr) return '-'; const d = new Date(dateStr + 'T00:00:00'); return d.toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }); }
+function animateCounter(elId, target) { const el = document.getElementById(elId); const current = parseInt(el.textContent) || 0; if (current === target) { el.textContent = target; return; } const duration = 600; const start = performance.now(); function tick(now) { const elapsed = now - start; const progress = Math.min(elapsed / duration, 1); const eased = 1 - Math.pow(1 - progress, 3); el.textContent = Math.round(current + (target - current) * eased); if (progress < 1) requestAnimationFrame(tick); } requestAnimationFrame(tick); }
 </script>
 </body>
 </html>
