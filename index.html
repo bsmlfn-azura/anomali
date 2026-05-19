@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SIMONDOC - Sistem Monitoring Dokumen OPD</title>
+    <title>SIMONDA - Sistem Monitoring Data Anomali OPD</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
@@ -81,8 +81,8 @@
         <div class="setup-box animate-fade-up" style="max-width:540px; width:90%;">
             <div class="text-center mb-8">
                 <img src="https://z-cdn-media.chatglm.cn/files/b61b2fff-7e19-4e6a-8a61-ee332e9d0a29.png?auth_key=1878850857-ac5ae558a6c24667ade06dff83237bd3-0-d32abc528bc1989b1a2e6e6f0930e235" alt="Logo" class="h-14 w-14 mx-auto object-contain mb-4" style="filter:drop-shadow(0 0 8px rgba(16,185,129,0.3));" onerror="this.style.display='none'">
-                <h1 class="font-display text-3xl font-bold text-white mb-2">SIMONDOC</h1>
-                <p class="text-slate-400 text-sm">Sistem Monitoring Dokumen OPD</p>
+                <h1 class="font-display text-3xl font-bold text-white mb-2">SIMONDA</h1>
+                <p class="text-slate-400 text-sm">Sistem Monitoring Data Anomali OPD</p>
             </div>
             <div class="glass rounded-2xl p-6 sm:p-8">
                 <div class="mb-4">
@@ -104,7 +104,7 @@
                 </button>
                 <div id="loginError" class="hidden p-3 rounded-lg bg-rose-500/10 border border-rose-500/30 text-rose-300 text-xs mb-4"></div>
                 <div class="mt-4 text-center text-xs text-slate-500">
-                    <p>Akun Default: <strong class="text-slate-400">admin / admin123</strong> atau <strong class="text-slate-400">opd / opd123</strong></p>
+                    <p>Akun Semua OPD: <strong class="text-slate-400">Username : opd | Password : opd123</strong></p>
                 </div>
             </div>
         </div>
@@ -124,8 +124,8 @@
             <div class="flex items-center gap-3">
                 <img src="https://z-cdn-media.chatglm.cn/files/b61b2fff-7e19-4e6a-8a61-ee332e9d0a29.png?auth_key=1878850857-ac5ae558a6c24667ade06dff83237bd3-0-d32abc528bc1989b1a2e6e6f0930e235" alt="Logo" class="h-10 w-10 sm:h-11 sm:w-11 object-contain" style="filter:drop-shadow(0 0 6px rgba(16,185,129,0.25));" onerror="this.style.display='none'">
                 <div>
-                    <h1 class="font-display text-lg sm:text-xl font-bold text-white leading-tight">SIMONDOC</h1>
-                    <p class="text-[0.6rem] sm:text-[0.65rem] text-slate-500 font-medium tracking-wider uppercase leading-tight">Monitoring Dokumen OPD</p>
+                    <h1 class="font-display text-lg sm:text-xl font-bold text-white leading-tight">SIMONDA</h1>
+                    <p class="text-[0.6rem] sm:text-[0.65rem] text-slate-500 font-medium tracking-wider uppercase leading-tight">Monitoring Data Anomali OPD</p>
                 </div>
             </div>
             <div class="flex items-center gap-3">
@@ -310,7 +310,7 @@ const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwBDNtMbzcGb1GX
 
 const USERS = [
     { username: 'admin', password: 'admin123', role: 'admin', name: 'Administrator' },
-    { username: 'opd', password: 'opd123', role: 'user', name: 'Staf OPD' }
+    { username: 'opd', password: 'opd123', role: 'user', name: 'Operator OPD' }
 ];
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024;
@@ -321,17 +321,71 @@ let selectedFileBase64 = null;
 let nipChecking = false;
 
 const OPD_LIST = [
-    'Dinas Pendidikan dan Kebudayaan', 'Dinas Kesehatan', 'Dinas Pekerjaan Umum dan Penataan Ruang',
-    'Dinas Perhubungan', 'Dinas Sosial', 'Dinas Kependudukan dan Pencatatan Sipil',
-    'Dinas Ketenagakerjaan', 'Dinas Pemberdayaan Perempuan dan Perlindungan Anak',
-    'Dinas Lingkungan Hidup', 'Dinas Penanaman Modal dan Pelayanan Terpadu Satu Pintu',
-    'Dinas Perumahan dan Kawasan Permukiman', 'Dinas Pemuda dan Olahraga',
-    'Dinas Komunikasi dan Informatika', 'Dinas Pertanian dan Perikanan',
-    'Dinas Perindustrian dan Perdagangan', 'Badan Kepegawaian Daerah',
-    'Badan Perencanaan Pembangunan Daerah', 'Badan Pengelolaan Keuangan dan Aset Daerah',
-    'Badan Pendapatan Daerah', 'Inspektorat', 'Sekretariat Daerah', 'Sekretariat DPRD',
-    'Kecamatan Kota Baru', 'Kecamatan Kota Timur', 'Kecamatan Kota Utara',
-    'Kecamatan Dumbo Raya', 'Kecamatan Tilongkabila'
+    'Dinas Pendidikan',
+    'Dinas Kesehatan',
+    'Dinas Pekerjaan Umum dan Penataan Ruang',
+    'Dinas Perhubungan',
+    'Dinas Sosial',
+    'Dinas Kependudukan dan Pencatatan Sipil',
+    'Dinas Perindustrian dan Tenagakerja',
+    'Dinas Keluarga Berencana Pemberdayaan Perempuan dan Perlindungan Anak',
+    'Dinas Lingkungan Hidup',
+    'Dinas Penanaman Modal dan Pelayanan Terpadu Satu Pintu',
+    'Dinas Perumahan dan Kawasan Permukiman',
+    'Dinas Pemuda dan Olahraga',
+    'Dinas Komunikasi dan Informatika',
+    'Dinas Pertanian Perinakanan dan Ketahanan Pangan',
+    'Dinas Koperasi Usaha Mikro dan Perdagangan',
+    'Dinas Peternakan dan Kesehatan Hewan',
+    'Dinas Perpustakaan Dan Kearsipan',
+    'Dinas Pemberdayaan Masyarakat dan Desa',
+    'Dinas Kebudayaan dan Pariwisata',
+    'Badan Kepegawaian dan Pengembangan Sumber Daya Manusia',
+    'Badan Perencanaan Pembangunan Riset dan Inovasi Daerah',
+    'Badan Pengelolaan Keuangan dan Aset Daerah',
+    'Badan Pendapatan Daerah',
+    'Badan Penanggulangan Bencana Daerah',
+    'Badan Kesatuan Bangsa dan Politik',
+    'Inspektorat',
+    'Satuan Polisi Pamong Praja',
+    'UOBK RSUD',
+    'Bagian Umum - Sekretariat Daerah',
+    'Bagian Hukum - Sekretariat Daerah',
+    'Bagian Perekonomian SDA - Sekretariat Daerah',
+    'Bagian Protokol dan Komunikasi Pimpinan - Sekretariat Daerah',
+    'Bagian Pemerintahan - Sekretariat Daerah',
+    'Bagian Administrasi Pembangunan - Sekretariat Daerah',
+    'Bagian Perencana Keuangan - Sekretariat Daerah',
+    'Bagian Organisasi - Sekretariat Daerah',
+    'Bagian Kesejahteraan Rakyat - Sekretariat Daerah',
+    'Bagian Pengadaan Barang Jasa - Sekretariat Daerah',
+    'Sekretariat DPRD',
+    'Kecamatan Arosbaya',
+    'Kecamatan Klampis',
+    'Kecamatan Bangkalan',
+    'Kecamatan Burneh',
+    'Kecamatan Socah',
+    'Kecamatan Kamal',
+    'Kecamatan Labang',
+    'Kecamatan Modung',
+    'Kecamatan Tragah',
+    'Kecamatan Sepulu',
+    'Kecamatan Tanjungbumi',
+    'Kecamatan Kwanyar',
+    'Kecamatan Konang',
+    'Kecamatan Kokop',
+    'Kecamatan Tanahmerah',
+    'Kecamatan Galis',
+    'Kecamatan Geger',
+    'Kecamatan Blega',
+    'Kelurahan Tonjung',
+    'Kelurahan Bancaran',
+    'Kelurahan Pejagan',
+    'Kelurahan Demangan',
+    'Kelurahan Kraton',
+    'Kelurahan Kemayoran',
+    'Kelurahan Mlajah',
+    'Kelurahan Pangeranan',
 ];
 
 // ===============================================================
@@ -442,7 +496,7 @@ function switchTab(tabName) {
 // ===============================================================
 // GANTI FUNGSI fetchSheetData LAMA DENGAN INI:
 function fetchSheetData() {
-    showLoading('Memuat data dari Google Sheets...');
+    showLoading('Memuat data...');
     
     // Timeout 15 detik jika server tidak merespon
     const controller = new AbortController();
