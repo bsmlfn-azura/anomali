@@ -333,27 +333,48 @@
         <section id="tab-monitoring" class="hidden animate-fade-up">
             <div class="mt-4">
                 <!-- Toolbar -->
-                <div class="glass rounded-2xl p-4 mb-4 flex flex-col sm:flex-row gap-3 items-start sm:items-center justify-between">
-                    <div class="flex items-center gap-2">
-                        <div class="w-8 h-8 rounded-lg bg-brand-500/15 flex items-center justify-center">
-                            <i class="fa-solid fa-chart-line text-brand-400 text-sm"></i>
+                <div class="glass rounded-2xl p-4 mb-4">
+                    <div class="flex flex-col gap-3">
+                        <!-- Baris 1: Filter Tanggal & Cetak -->
+                        <div class="flex flex-wrap items-center gap-3 w-full">
+                            <div class="flex items-center gap-2 flex-shrink-0">
+                                <div class="relative flex-1 sm:flex-none">
+                                    <i class="fa-solid fa-calendar-day absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 text-sm"></i>
+                                    <input type="date" id="filterStartDate" onchange="applyFilters()" class="input-field pl-9 py-2.5 text-sm" style="min-width:150px;" title="Dari Tanggal">
+                                </div>
+                                <span class="text-slate-500 text-xs font-semibold">S/D</span>
+                                <div class="relative flex-1 sm:flex-none">
+                                    <i class="fa-solid fa-calendar-check absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 text-sm"></i>
+                                    <input type="date" id="filterEndDate" onchange="applyFilters()" class="input-field pl-9 py-2.5 text-sm" style="min-width:150px;" title="Sampai Tanggal">
+                                </div>
+                            </div>
+                            
+                            <div class="flex items-center gap-2 ml-auto">
+                                <button onclick="resetFilters()" class="px-3 h-10 rounded-xl glass-light flex items-center justify-center text-slate-400 hover:text-amber-400 transition text-xs font-semibold gap-1" title="Reset Filter">
+                                    <i class="fa-solid fa-rotate-left"></i> <span class="hidden sm:inline">Reset</span>
+                                </button>
+                                <button onclick="printRecap()" class="px-4 h-10 rounded-xl btn-primary text-white font-semibold text-sm flex items-center gap-2">
+                                    <i class="fa-solid fa-print"></i> <span>Cetak Rekap</span>
+                                </button>
+                            </div>
                         </div>
-                        <h2 class="font-display text-lg font-bold text-white">Monitoring OPD</h2>
-                    </div>
-                    <div class="flex items-center gap-3 w-full sm:w-auto">
-                        <div class="relative flex-1 sm:flex-none">
-                            <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 text-sm"></i>
-                            <input type="text" id="searchInput" oninput="renderTable()" placeholder="Cari OPD atau NIP..." class="input-field pl-10 py-2.5 text-sm" style="min-width:220px;">
+                        
+                        <!-- Baris 2: Pencarian & Tipe File -->
+                        <div class="flex flex-wrap items-center gap-3 w-full">
+                            <div class="relative flex-1 min-w-[180px]">
+                                <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 text-sm"></i>
+                                <input type="text" id="searchInput" oninput="applyFilters()" placeholder="Cari OPD atau NIP..." class="input-field pl-10 py-2.5 text-sm">
+                            </div>
+                            <select id="filterType" onchange="applyFilters()" class="input-field py-2.5 text-sm" style="width:auto;">
+                                <option value="">Semua Tipe</option>
+                                <option value="pdf">PDF</option>
+                                <option value="excel">Excel</option>
+                                <option value="image">Gambar</option>
+                            </select>
+                            <button onclick="fetchSheetData()" class="w-10 h-10 rounded-xl glass-light flex items-center justify-center text-slate-400 hover:text-brand-400 transition" title="Refresh Data">
+                                <i class="fa-solid fa-arrows-rotate"></i>
+                            </button>
                         </div>
-                        <select id="filterType" onchange="renderTable()" class="input-field py-2.5 text-sm" style="width:auto;">
-                            <option value="">Semua Tipe</option>
-                            <option value="pdf">PDF</option>
-                            <option value="excel">Excel</option>
-                            <option value="image">Gambar</option>
-                        </select>
-                        <button onclick="fetchSheetData()" class="w-10 h-10 rounded-xl glass-light flex items-center justify-center text-slate-400 hover:text-brand-400 transition" title="Refresh Data">
-                            <i class="fa-solid fa-arrows-rotate"></i>
-                        </button>
                     </div>
                 </div>
 
@@ -1019,87 +1040,6 @@ function renderRecentUploads() {
 }
 
 // ===============================================================
-// RENDER TABEL MONITORING
-// ===============================================================
-function renderTable() {
-    const tbody = document.getElementById('tableBody');
-    const search = (document.getElementById('searchInput')?.value || '').toLowerCase();
-    const filterType = document.getElementById('filterType')?.value || '';
-
-    let filtered = sheetData.filter(d => {
-        const matchSearch = !search || d.namaOpd.toLowerCase().includes(search) || d.nip.includes(search);
-        const matchType = !filterType || d.fileType === filterType;
-        return matchSearch && matchType;
-    });
-
-    filtered.sort((a, b) => new Date(b.tanggal) - new Date(a.tanggal));
-
-    if (filtered.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="8" class="text-center text-slate-500 py-12">
-            <i class="fa-solid fa-inbox text-3xl mb-3 block text-slate-600"></i>Tidak ada data ditemukan</td></tr>`;
-        return;
-    }
-
-    tbody.innerHTML = filtered.map((d, i) => {
-        const tanggal = formatTanggal(d.tanggal);
-        const badgeClass = d.fileType === 'pdf' ? 'badge-pdf' : d.fileType === 'excel' ? 'badge-excel' : 'badge-image';
-        const badgeIcon = d.fileType === 'pdf' ? 'fa-file-pdf' : d.fileType === 'excel' ? 'fa-file-excel' : 'fa-file-image';
-        const badgeLabel = d.fileType === 'pdf' ? 'PDF' : d.fileType === 'excel' ? 'Excel' : 'Gambar';
-
-        return `<tr class="animate-slide-in" style="animation-delay:${Math.min(i * 30, 300)}ms">
-            <td class="text-slate-500 font-mono text-xs">${i + 1}</td>
-            <td class="text-xs text-slate-400 whitespace-nowrap">${tanggal}</td>
-            <td class="text-sm font-semibold text-white max-w-[180px] truncate" title="${d.namaOpd}">${d.namaOpd}</td>
-            <td class="font-mono text-xs text-slate-300">${formatNip(d.nip)}</td>
-            <td class="text-xs text-slate-300 max-w-[150px] truncate" title="${d.fileName}">${d.fileName || '-'}</td>
-            <td><span class="badge ${badgeClass}"><i class="fa-solid ${badgeIcon}"></i> ${badgeLabel}</span></td>
-            <td><span class="badge badge-active"><i class="fa-solid fa-circle-check"></i> ${d.status || 'Terverifikasi'}</span></td>
-            <td>
-                <button onclick="deleteEntry('${d.nip}')" class="w-8 h-8 rounded-lg bg-rose-500/10 flex items-center justify-center text-rose-400 hover:bg-rose-500/20 transition" title="Hapus">
-                    <i class="fa-solid fa-trash-can text-xs"></i>
-                </button>
-            </td>
-        </tr>`;
-    }).join('');
-}
-
-// ===============================================================
-// RENDER CHART OPD
-// ===============================================================
-function renderOpdChart() {
-    const container = document.getElementById('opd-bars');
-    const opdCount = {};
-
-    sheetData.forEach(d => {
-        const name = d.namaOpd;
-        const short = name.replace('Dinas ', 'D. ').replace('Badan ', 'B. ').replace('Sekretariat ', 'Sek. ').replace('Kecamatan ', 'Kec. ');
-        opdCount[short] = (opdCount[short] || 0) + 1;
-    });
-
-    const entries = Object.entries(opdCount).sort((a, b) => b[1] - a[1]);
-    const maxCount = entries.length ? entries[0][1] : 1;
-
-    if (entries.length === 0) {
-        container.innerHTML = '<p class="text-xs text-slate-500 text-center py-4">Belum ada data</p>';
-        return;
-    }
-
-    const colors = ['from-brand-600 to-brand-400', 'from-teal-600 to-teal-400', 'from-emerald-600 to-emerald-400', 'from-cyan-600 to-cyan-400', 'from-amber-600 to-amber-400', 'from-orange-600 to-orange-400', 'from-lime-600 to-lime-400'];
-
-    container.innerHTML = entries.map(([name, count]) => {
-        const pct = Math.max(5, (count / maxCount) * 100);
-        const color = colors[Math.abs(hashStr(name)) % colors.length];
-        return `<div class="flex items-center gap-3">
-            <span class="text-xs text-slate-400 w-36 sm:w-44 truncate flex-shrink-0 text-right" title="${name}">${name}</span>
-            <div class="flex-1 bg-surface-800 rounded-lg overflow-hidden">
-                <div class="opd-bar bg-gradient-to-r ${color} animate-bar-grow" style="width:${pct}%"></div>
-            </div>
-            <span class="text-xs font-bold text-white w-6 text-center">${count}</span>
-        </div>`;
-    }).join('');
-}
-
-// ===============================================================
 // MODAL & TOAST
 // ===============================================================
 function showModal(content) {
@@ -1135,7 +1075,256 @@ function showLoading(text) {
 function hideLoading() {
     document.getElementById('loadingOverlay').classList.remove('show');
 }
+// ===============================================================
+// FILTER DATA (PUSAT)
+// ===============================================================
+function getFilteredData() {
+    const search = (document.getElementById('searchInput')?.value || '').toLowerCase();
+    const filterType = document.getElementById('filterType')?.value || '';
+    const startDate = document.getElementById('filterStartDate')?.value || '';
+    const endDate = document.getElementById('filterEndDate')?.value || '';
 
+    let filtered = sheetData.filter(d => {
+        // Filter Pencarian
+        const matchSearch = !search || d.namaOpd.toLowerCase().includes(search) || d.nip.includes(search);
+        // Filter Tipe File
+        const matchType = !filterType || d.fileType === filterType;
+        
+        // Filter Tanggal
+        let matchDate = true;
+        if (d.tanggal) {
+            const dateOnly = d.tanggal.slice(0, 10); // Ambil YYYY-MM-DD saja
+            if (startDate && dateOnly < startDate) matchDate = false;
+            if (endDate && dateOnly > endDate) matchDate = false;
+        } else if (startDate || endDate) {
+            matchDate = false;
+        }
+
+        return matchSearch && matchType && matchDate;
+    });
+
+    // Urutkan berdasarkan tanggal terbaru
+    return filtered.sort((a, b) => new Date(b.tanggal) - new Date(a.tanggal));
+}
+
+// Panggil saat user mengubah filter
+function applyFilters() {
+    renderTable();
+    renderOpdChart();
+}
+
+// Reset semua filter ke kosong
+function resetFilters() {
+    document.getElementById('searchInput').value = '';
+    document.getElementById('filterType').value = '';
+    document.getElementById('filterStartDate').value = '';
+    document.getElementById('filterEndDate').value = '';
+    applyFilters();
+}
+
+// ===============================================================
+// RENDER TABEL MONITORING (MENGGUNAKAN DATA FILTER)
+// ===============================================================
+function renderTable() {
+    const tbody = document.getElementById('tableBody');
+    const filtered = getFilteredData();
+
+    if (filtered.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="8" class="text-center text-slate-500 py-12">
+            <i class="fa-solid fa-filter-circle-xmark text-3xl mb-3 block text-slate-600"></i>Tidak ada data sesuai filter</td></tr>`;
+        return;
+    }
+
+    tbody.innerHTML = filtered.map((d, i) => {
+        const tanggal = formatTanggal(d.tanggal);
+        const badgeClass = d.fileType === 'pdf' ? 'badge-pdf' : d.fileType === 'excel' ? 'badge-excel' : 'badge-image';
+        const badgeIcon = d.fileType === 'pdf' ? 'fa-file-pdf' : d.fileType === 'excel' ? 'fa-file-excel' : 'fa-file-image';
+        const badgeLabel = d.fileType === 'pdf' ? 'PDF' : d.fileType === 'excel' ? 'Excel' : 'Gambar';
+
+        return `<tr class="animate-slide-in" style="animation-delay:${Math.min(i * 30, 300)}ms">
+            <td class="text-slate-500 font-mono text-xs">${i + 1}</td>
+            <td class="text-xs text-slate-400 whitespace-nowrap">${tanggal}</td>
+            <td class="text-sm font-semibold text-white max-w-[180px] truncate" title="${d.namaOpd}">${d.namaOpd}</td>
+            <td class="font-mono text-xs text-slate-300">${formatNip(d.nip)}</td>
+            <td class="text-xs text-slate-300 max-w-[150px] truncate" title="${d.fileName}">${d.fileName || '-'}</td>
+            <td><span class="badge ${badgeClass}"><i class="fa-solid ${badgeIcon}"></i> ${badgeLabel}</span></td>
+            <td><span class="badge badge-active"><i class="fa-solid fa-circle-check"></i> ${d.status || 'Terverifikasi'}</span></td>
+            <td>
+                <button onclick="deleteEntry('${d.nip}')" class="w-8 h-8 rounded-lg bg-rose-500/10 flex items-center justify-center text-rose-400 hover:bg-rose-500/20 transition" title="Hapus">
+                    <i class="fa-solid fa-trash-can text-xs"></i>
+                </button>
+            </td>
+        </tr>`;
+    }).join('');
+}
+
+// ===============================================================
+// RENDER CHART OPD (MENGGUNAKAN DATA FILTER)
+// ===============================================================
+function renderOpdChart() {
+    const container = document.getElementById('opd-bars');
+    const filtered = getFilteredData();
+    const opdCount = {};
+
+    filtered.forEach(d => {
+        const name = d.namaOpd;
+        const short = name.replace('Dinas ', 'D. ').replace('Badan ', 'B. ').replace('Sekretariat ', 'Sek. ').replace('Kecamatan ', 'Kec. ');
+        opdCount[short] = (opdCount[short] || 0) + 1;
+    });
+
+    const entries = Object.entries(opdCount).sort((a, b) => b[1] - a[1]);
+    const maxCount = entries.length ? entries[0][1] : 1;
+
+    if (entries.length === 0) {
+        container.innerHTML = '<p class="text-xs text-slate-500 text-center py-4">Tidak ada data untuk ditampilkan</p>';
+        return;
+    }
+
+    const colors = ['from-brand-600 to-brand-400', 'from-teal-600 to-teal-400', 'from-emerald-600 to-emerald-400', 'from-cyan-600 to-cyan-400', 'from-amber-600 to-amber-400', 'from-orange-600 to-orange-400', 'from-lime-600 to-lime-400'];
+
+    container.innerHTML = entries.map(([name, count]) => {
+        const pct = Math.max(5, (count / maxCount) * 100);
+        const color = colors[Math.abs(hashStr(name)) % colors.length];
+        return `<div class="flex items-center gap-3">
+            <span class="text-xs text-slate-400 w-36 sm:w-44 truncate flex-shrink-0 text-right" title="${name}">${name}</span>
+            <div class="flex-1 bg-surface-800 rounded-lg overflow-hidden">
+                <div class="opd-bar bg-gradient-to-r ${color} animate-bar-grow" style="width:${pct}%"></div>
+            </div>
+            <span class="text-xs font-bold text-white w-6 text-center">${count}</span>
+        </div>`;
+    }).join('');
+}
+
+// ===============================================================
+// CETAK REKAP
+// ===============================================================
+function printRecap() {
+    const filteredData = getFilteredData();
+    if (filteredData.length === 0) {
+        showToast('Tidak ada data untuk dicetak berdasarkan filter saat ini.', 'warning');
+        return;
+    }
+
+    const startDateVal = document.getElementById('filterStartDate').value;
+    const endDateVal = document.getElementById('filterEndDate').value;
+    let periodText = 'Semua Periode';
+    if (startDateVal && endDateVal) periodText = `${formatDateID(startDateVal)} s/d ${formatDateID(endDateVal)}`;
+    else if (startDateVal) periodText = `Mulai ${formatDateID(startDateVal)}`;
+    else if (endDateVal) periodText = `Sampai ${formatDateID(endDateVal)}`;
+
+    // Hitung rekap OPD
+    const opdSummary = {};
+    filteredData.forEach(d => {
+        opdSummary[d.namaOpd] = (opdSummary[d.namaOpd] || 0) + 1;
+    });
+    const summaryEntries = Object.entries(opdSummary).sort((a, b) => b[1] - a[1]);
+
+    // Generate Baris Tabel Detail
+    let tableRows = filteredData.map((d, i) => `
+        <tr>
+            <td style="text-align:center;">${i + 1}</td>
+            <td>${formatTanggal(d.tanggal)}</td>
+            <td>${d.namaOpd}</td>
+            <td>${formatNip(d.nip)}</td>
+            <td>${d.fileName || '-'}</td>
+            <td style="text-align:center;">${d.fileType.toUpperCase()}</td>
+            <td style="text-align:center;">${d.status || 'Terverifikasi'}</td>
+        </tr>
+    `).join('');
+
+    // Generate Baris Tabel Rekap OPD
+    let summaryRows = summaryEntries.map(([name, count]) => `
+        <tr>
+            <td>${name}</td>
+            <td style="text-align:right; font-weight:bold;">${count} Dokumen</td>
+        </tr>
+    `).join('');
+
+    // Buat Halaman Cetak
+    const printHtml = `
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <title>Cetak Rekap SIMONDOC</title>
+            <style>
+                body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 20px; color: #1e293b; }
+                h2 { text-align: center; margin-bottom: 5px; text-transform: uppercase; letter-spacing: 2px; }
+                .period { text-align: center; margin-bottom: 20px; font-size: 14px; color: #64748b; }
+                table { width: 100%; border-collapse: collapse; margin-bottom: 30px; font-size: 12px; }
+                th, td { border: 1px solid #cbd5e1; padding: 8px 10px; }
+                th { background-color: #f1f5f9; text-align: left; font-weight: 600; }
+                .summary-table { width: 50%; margin-left: auto; margin-right: auto; }
+                .summary-table td { font-size: 13px; }
+                .divider { border-top: 2px solid #10b981; margin: 30px 0; }
+                .footer { text-align: right; margin-top: 50px; font-size: 13px; }
+                @media print {
+                    body { margin: 0; }
+                    table { page-break-inside: auto; }
+                    tr { page-break-inside: avoid; page-break-after: auto; }
+                }
+            </style>
+        </head>
+        <body>
+            <h2>Rekapitulasi Upload Dokumen OPD</h2>
+            <div class="period">Periode: ${periodText} | Total Data: ${filteredData.length} Dokumen</div>
+            
+            <h4 style="margin-bottom:10px;">Detail Upload:</h4>
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width:40px; text-align:center;">No</th>
+                        <th>Tanggal</th>
+                        <th>Nama OPD</th>
+                        <th>NIP</th>
+                        <th>Nama File</th>
+                        <th>Tipe</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${tableRows}
+                </tbody>
+            </table>
+
+            <div class="divider"></div>
+
+            <h4 style="text-align:center; margin-bottom:10px;">Rekapitulasi Per OPD</h4>
+            <table class="summary-table">
+                <thead>
+                    <tr>
+                        <th>Nama OPD</th>
+                        <th style="text-align:right;">Jumlah</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${summaryRows}
+                </tbody>
+            </table>
+
+            <div class="footer">
+                <p>Dicetak pada: ${new Date().toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</p>
+            </div>
+
+            <script>
+                // Otomatis memunculkan dialog cetak saat halaman dibuka
+                window.onload = function() { window.print(); }
+            <\/script>
+        </body>
+        </html>
+    `;
+
+    // Buka di tab baru
+    const printWindow = window.open('', '_blank');
+    printWindow.document.write(printHtml);
+    printWindow.document.close();
+}
+
+// Format tanggal untuk header cetak (lebih formal)
+function formatDateID(dateStr) {
+    if (!dateStr) return '-';
+    const d = new Date(dateStr + 'T00:00:00');
+    return d.toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
+}
 // ===============================================================
 // UTILITAS
 // ===============================================================
