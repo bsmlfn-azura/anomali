@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SIMONDA - Sistem Monitoring Data Anomali OPD</title>
+    <title>SIMONDOC - Sistem Monitoring Dokumen OPD</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
@@ -66,7 +66,6 @@
         .modal-overlay { position:fixed; inset:0; z-index:9000; display:flex; align-items:center; justify-content:center; background:rgba(0,0,0,0.7); backdrop-filter:blur(4px); opacity:0; pointer-events:none; transition:opacity 0.3s; }
         .modal-overlay.show { opacity:1; pointer-events:auto; }
         .modal-box { background:#0F1A2E; border:1px solid #253D60; border-radius:20px; padding:32px; max-width:480px; width:90%; animation:modal-in 0.3s ease-out; }
-        .opd-bar { height:28px; border-radius:6px; transition:width 0.6s ease; min-width:4px; }
         .loading-overlay { position:fixed; inset:0; z-index:8500; background:rgba(7,13,26,0.85); backdrop-filter:blur(6px); display:flex; align-items:center; justify-content:center; opacity:0; pointer-events:none; transition:opacity 0.3s; }
         .loading-overlay.show { opacity:1; pointer-events:auto; }
         .btn-primary { background:linear-gradient(135deg, #059669, #10B981); transition:all 0.3s; box-shadow:0 4px 20px rgba(16,185,129,0.25); }
@@ -82,35 +81,64 @@
         <div class="setup-box animate-fade-up" style="max-width:540px; width:90%;">
             <div class="text-center mb-8">
                 <img src="https://z-cdn-media.chatglm.cn/files/b61b2fff-7e19-4e6a-8a61-ee332e9d0a29.png?auth_key=1878850857-ac5ae558a6c24667ade06dff83237bd3-0-d32abc528bc1989b1a2e6e6f0930e235" alt="Logo" class="h-14 w-14 mx-auto object-contain mb-4" style="filter:drop-shadow(0 0 8px rgba(16,185,129,0.3));" onerror="this.style.display='none'">
-                <h1 class="font-display text-3xl font-bold text-white mb-2">SIMONDA</h1>
-                <p class="text-slate-400 text-sm">Sistem Monitoring Data Anomali OPD</p>
+                <h1 class="font-display text-3xl font-bold text-white mb-2">SIMONDOC</h1>
+                <p class="text-slate-400 text-sm">Sistem Monitoring Dokumen OPD</p>
             </div>
             <div class="glass rounded-2xl p-6 sm:p-8">
-                <div class="mb-4"><label class="block text-sm font-semibold text-slate-300 mb-2">Username</label><div class="relative"><i class="fa-solid fa-user absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 text-sm"></i><input type="text" id="loginUsername" class="input-field pl-11" placeholder="Masukkan username" autocomplete="off"></div></div>
-                <div class="mb-6"><label class="block text-sm font-semibold text-slate-300 mb-2">Password</label><div class="relative"><i class="fa-solid fa-lock absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 text-sm"></i><input type="password" id="loginPassword" class="input-field pl-11" placeholder="Masukkan password" onkeydown="if(event.key==='Enter') handleLogin()"></div></div>
-                <button onclick="handleLogin()" class="btn-primary w-full py-3.5 rounded-xl font-bold text-white flex items-center justify-center gap-2 mb-3"><i class="fa-solid fa-arrow-right-to-bracket"></i> Masuk</button>
+                <div class="mb-4">
+                    <label class="block text-sm font-semibold text-slate-300 mb-2">Username</label>
+                    <div class="relative">
+                        <i class="fa-solid fa-user absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 text-sm"></i>
+                        <input type="text" id="loginUsername" class="input-field pl-11" placeholder="Masukkan username" autocomplete="off">
+                    </div>
+                </div>
+                <div class="mb-6">
+                    <label class="block text-sm font-semibold text-slate-300 mb-2">Password</label>
+                    <div class="relative">
+                        <i class="fa-solid fa-lock absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 text-sm"></i>
+                        <input type="password" id="loginPassword" class="input-field pl-11" placeholder="Masukkan password" onkeydown="if(event.key==='Enter') handleLogin()">
+                    </div>
+                </div>
+                <button onclick="handleLogin()" class="btn-primary w-full py-3.5 rounded-xl font-bold text-white flex items-center justify-center gap-2 mb-3">
+                    <i class="fa-solid fa-arrow-right-to-bracket"></i> Masuk
+                </button>
                 <div id="loginError" class="hidden p-3 rounded-lg bg-rose-500/10 border border-rose-500/30 text-rose-300 text-xs mb-4"></div>
-                <div class="mt-4 text-center text-xs text-slate-500"><p>Akun Semua OPD : <strong class="text-slate-400">Username : opd Password : opd123</strong></p></div>
+                <div class="mt-4 text-center text-xs text-slate-500">
+                    <p>Akun Default: <strong class="text-slate-400">admin / admin123</strong> atau <strong class="text-slate-400">opd / opd123</strong></p>
+                </div>
             </div>
         </div>
     </div>
 
     <!-- LOADING -->
-    <div class="loading-overlay" id="loadingOverlay"><div class="text-center"><div class="w-12 h-12 border-3 border-brand-500 border-t-transparent rounded-full animate-spin mx-auto mb-4" style="border-width:3px;"></div><p class="text-sm text-slate-400" id="loadingText">Memuat data...</p></div></div>
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="text-center">
+            <div class="w-12 h-12 border-3 border-brand-500 border-t-transparent rounded-full animate-spin mx-auto mb-4" style="border-width:3px;"></div>
+            <p class="text-sm text-slate-400" id="loadingText">Memuat data...</p>
+        </div>
+    </div>
 
     <!-- HEADER -->
     <header class="glass sticky top-0 z-50 border-b border-surface-600">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between">
             <div class="flex items-center gap-3">
                 <img src="https://z-cdn-media.chatglm.cn/files/b61b2fff-7e19-4e6a-8a61-ee332e9d0a29.png?auth_key=1878850857-ac5ae558a6c24667ade06dff83237bd3-0-d32abc528bc1989b1a2e6e6f0930e235" alt="Logo" class="h-10 w-10 sm:h-11 sm:w-11 object-contain" style="filter:drop-shadow(0 0 6px rgba(16,185,129,0.25));" onerror="this.style.display='none'">
-                <div><h1 class="font-display text-lg sm:text-xl font-bold text-white leading-tight">SIMONDA</h1><p class="text-[0.6rem] sm:text-[0.65rem] text-slate-500 font-medium tracking-wider uppercase leading-tight">Monitoring Data Anomali OPD</p></div>
+                <div>
+                    <h1 class="font-display text-lg sm:text-xl font-bold text-white leading-tight">SIMONDOC</h1>
+                    <p class="text-[0.6rem] sm:text-[0.65rem] text-slate-500 font-medium tracking-wider uppercase leading-tight">Monitoring Dokumen OPD</p>
+                </div>
             </div>
             <div class="flex items-center gap-3">
-                <div id="connection-status" class="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full glass-light text-xs"><span class="w-2 h-2 rounded-full bg-brand-400" style="animation:dot-pulse 2s infinite;"></span><span class="text-brand-400">Terhubung</span></div>
+                <div class="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full glass-light text-xs">
+                    <span class="w-2 h-2 rounded-full bg-brand-400" style="animation:dot-pulse 2s infinite;"></span>
+                    <span class="text-brand-400">Terhubung</span>
+                </div>
                 <div class="flex items-center gap-2">
                     <span id="userBadge" class="badge badge-admin text-[0.7rem] py-1 px-2.5"><i class="fa-solid fa-shield-halved mr-1"></i> Admin</span>
                     <span id="userName" class="text-xs text-slate-400 font-semibold hidden sm:inline"></span>
-                    <button onclick="handleLogout()" class="w-9 h-9 rounded-lg glass-light flex items-center justify-center text-slate-400 hover:text-rose-400 transition" title="Logout"><i class="fa-solid fa-right-from-bracket text-sm"></i></button>
+                    <button onclick="handleLogout()" class="w-9 h-9 rounded-lg glass-light flex items-center justify-center text-slate-400 hover:text-rose-400 transition" title="Logout">
+                        <i class="fa-solid fa-right-from-bracket text-sm"></i>
+                    </button>
                 </div>
             </div>
         </div>
@@ -119,9 +147,9 @@
     <!-- NAVIGASI -->
     <nav class="max-w-7xl mx-auto px-4 sm:px-6 pt-6 pb-2">
         <div class="flex gap-2 overflow-x-auto pb-2" id="nav-tabs">
-            <button class="tab-btn active" id="tab-btn-upload" onclick="switchTab('upload')"><i class="fa-solid fa-cloud-arrow-up mr-2"></i>Upload Dokumen</button>
+            <button class="tab-btn active" id="tab-btn-upload" onclick="switchTab('upload')"><i class="fa-solid fa-cloud-arrow-up mr-2"></i>Upload</button>
             <button class="tab-btn" id="tab-btn-cek" onclick="switchTab('cek')"><i class="fa-solid fa-magnifying-glass-chart mr-2"></i>Cek Status</button>
-            <button class="tab-btn" id="tab-btn-monitoring" onclick="switchTab('monitoring')"><i class="fa-solid fa-chart-line mr-2"></i>Monitoring OPD</button>
+            <button class="tab-btn" id="tab-btn-monitoring" onclick="switchTab('monitoring')"><i class="fa-solid fa-chart-line mr-2"></i>Monitoring</button>
         </div>
     </nav>
 
@@ -133,21 +161,52 @@
             <div class="grid lg:grid-cols-5 gap-6 mt-4">
                 <div class="lg:col-span-3">
                     <div class="glass rounded-2xl p-6 sm:p-8">
-                        <div class="flex items-center gap-3 mb-6"><div class="w-8 h-8 rounded-lg bg-brand-500/15 flex items-center justify-center"><i class="fa-solid fa-file-circle-plus text-brand-400 text-sm"></i></div><h2 class="font-display text-xl font-bold text-white">Form Upload Dokumen</h2></div>
-                        <form id="uploadForm" onsubmit="return false;" novalidate>
-                            <div class="mb-5"><label class="block text-sm font-semibold text-slate-300 mb-2"><i class="fa-solid fa-building-columns mr-1 text-brand-400"></i> Nama OPD</label><select id="inputOpd" class="input-field" required><option value="">-- Pilih OPD --</option></select></div>
-                            <div class="mb-5"><label class="block text-sm font-semibold text-slate-300 mb-2"><i class="fa-solid fa-id-card mr-1 text-brand-400"></i> NIP</label><div class="relative"><input type="text" id="inputNip" class="input-field pr-10" placeholder="Masukkan 18 digit NIP" maxlength="18" required autocomplete="off"><span id="nip-status-icon" class="absolute right-3 top-1/2 -translate-y-1/2 text-sm hidden"></span></div><p class="text-xs mt-1.5" id="nip-hint"><span class="text-slate-500">Format: 18 digit angka</span></p></div>
-                            
-                            <!-- INPUT NO WA BARU -->
-                            <div class="mb-5"><label class="block text-sm font-semibold text-slate-300 mb-2"><i class="fa-solid fa-brands fa-whatsapp mr-1 text-brand-400"></i> No. WhatsApp</label><input type="tel" id="inputWa" class="input-field" placeholder="Contoh: 081234567890" required><p class="text-xs mt-1.5 text-slate-500">Digunakan untuk notifikasi status verifikasi</p></div>
-
-                            <div class="mb-6"><label class="block text-sm font-semibold text-slate-300 mb-2"><i class="fa-solid fa-paperclip mr-1 text-brand-400"></i> Upload Dokumen</label>
-                                <div id="uploadZone" class="upload-zone" onclick="document.getElementById('inputFile').click()"><input type="file" id="inputFile" class="hidden" accept=".xlsx,.xls,.pdf,.jpg,.jpeg,.png">
-                                    <div id="uploadPlaceholder"><div class="w-16 h-16 mx-auto mb-4 rounded-2xl bg-surface-700 flex items-center justify-center animate-float"><i class="fa-solid fa-cloud-arrow-up text-2xl text-brand-400"></i></div><p class="text-slate-300 font-semibold mb-1">Klik atau seret file ke sini</p><p class="text-xs text-slate-500">Format: Excel, PDF, JPG/PNG (Maks. 5MB)</p></div>
-                                    <div id="uploadPreview" class="hidden"><div class="flex items-center justify-center gap-3"><div id="fileIcon" class="w-12 h-12 rounded-xl flex items-center justify-center text-xl"></div><div class="text-left"><p id="fileName" class="text-sm font-semibold text-white truncate max-w-[200px]"></p><p id="fileSize" class="text-xs text-slate-400"></p></div><button type="button" onclick="event.stopPropagation(); removeFile()" class="ml-2 w-8 h-8 rounded-lg bg-red-500/15 flex items-center justify-center text-red-400 hover:bg-red-500/25 transition"><i class="fa-solid fa-xmark text-sm"></i></button></div></div>
+                        <div class="flex items-center gap-3 mb-6">
+                            <div class="w-8 h-8 rounded-lg bg-brand-500/15 flex items-center justify-center"><i class="fa-solid fa-file-circle-plus text-brand-400 text-sm"></i></div>
+                            <h2 class="font-display text-xl font-bold text-white">Form Upload Dokumen</h2>
+                        </div>
+                        <form onsubmit="return false;" novalidate>
+                            <div class="mb-5">
+                                <label class="block text-sm font-semibold text-slate-300 mb-2"><i class="fa-solid fa-building-columns mr-1 text-brand-400"></i> Nama OPD</label>
+                                <select id="inputOpd" class="input-field" required><option value="">-- Pilih OPD --</option></select>
+                            </div>
+                            <div class="mb-5">
+                                <label class="block text-sm font-semibold text-slate-300 mb-2"><i class="fa-solid fa-id-card mr-1 text-brand-400"></i> NIP</label>
+                                <div class="relative">
+                                    <input type="text" id="inputNip" class="input-field pr-10" placeholder="Masukkan 18 digit NIP" maxlength="18" required autocomplete="off">
+                                    <span id="nip-status-icon" class="absolute right-3 top-1/2 -translate-y-1/2 text-sm hidden"></span>
+                                </div>
+                                <p class="text-xs mt-1.5" id="nip-hint"><span class="text-slate-500">Format: 18 digit angka</span></p>
+                            </div>
+                            <div class="mb-5">
+                                <label class="block text-sm font-semibold text-slate-300 mb-2"><i class="fa-solid fa-brands fa-whatsapp mr-1 text-brand-400"></i> No. WhatsApp</label>
+                                <input type="tel" id="inputWa" class="input-field" placeholder="Contoh: 081234567890" required>
+                                <p class="text-xs mt-1.5 text-slate-500">Untuk notifikasi status verifikasi</p>
+                            </div>
+                            <div class="mb-6">
+                                <label class="block text-sm font-semibold text-slate-300 mb-2"><i class="fa-solid fa-paperclip mr-1 text-brand-400"></i> Upload Dokumen</label>
+                                <div id="uploadZone" class="upload-zone" onclick="document.getElementById('inputFile').click()">
+                                    <input type="file" id="inputFile" class="hidden" accept=".xlsx,.xls,.pdf,.jpg,.jpeg,.png">
+                                    <div id="uploadPlaceholder">
+                                        <div class="w-16 h-16 mx-auto mb-4 rounded-2xl bg-surface-700 flex items-center justify-center animate-float"><i class="fa-solid fa-cloud-arrow-up text-2xl text-brand-400"></i></div>
+                                        <p class="text-slate-300 font-semibold mb-1">Klik atau seret file ke sini</p>
+                                        <p class="text-xs text-slate-500">Format: Excel, PDF, JPG/PNG (Maks. 5MB)</p>
+                                    </div>
+                                    <div id="uploadPreview" class="hidden">
+                                        <div class="flex items-center justify-center gap-3">
+                                            <div id="fileIcon" class="w-12 h-12 rounded-xl flex items-center justify-center text-xl"></div>
+                                            <div class="text-left">
+                                                <p id="fileName" class="text-sm font-semibold text-white truncate max-w-[200px]"></p>
+                                                <p id="fileSize" class="text-xs text-slate-400"></p>
+                                            </div>
+                                            <button type="button" onclick="event.stopPropagation(); removeFile()" class="ml-2 w-8 h-8 rounded-lg bg-red-500/15 flex items-center justify-center text-red-400 hover:bg-red-500/25 transition"><i class="fa-solid fa-xmark text-sm"></i></button>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
-                            <button type="button" id="btnSubmit" onclick="handleSubmit()" class="btn-primary w-full py-3.5 rounded-xl font-bold text-white flex items-center justify-center gap-2"><i class="fa-solid fa-paper-plane"></i><span id="btnText">Kirim Dokumen</span></button>
+                            <button type="button" id="btnSubmit" onclick="handleSubmit()" class="btn-primary w-full py-3.5 rounded-xl font-bold text-white flex items-center justify-center gap-2">
+                                <i class="fa-solid fa-paper-plane"></i><span id="btnText">Kirim Dokumen</span>
+                            </button>
                         </form>
                     </div>
                 </div>
@@ -158,7 +217,15 @@
                         <div class="stat-card"><div class="stat-icon bg-brand-500/15 text-brand-400"><i class="fa-solid fa-circle-check"></i></div><div class="stat-number text-white" id="stat-verified">-</div><div class="stat-label">Terverifikasi</div></div>
                         <div class="stat-card"><div class="stat-icon bg-rose-500/15 text-rose-400"><i class="fa-solid fa-circle-xmark"></i></div><div class="stat-number text-white" id="stat-rejected">-</div><div class="stat-label">Ditolak</div></div>
                     </div>
-                    <div class="glass rounded-2xl p-5"><h3 class="text-sm font-bold text-slate-300 mb-3 flex items-center gap-2"><i class="fa-solid fa-circle-info text-amber-400"></i> Panduan</h3><ul class="space-y-2 text-xs text-slate-400"><li class="flex items-start gap-2"><i class="fa-solid fa-check text-brand-400 mt-0.5"></i> Isi data dan nomor WA aktif</li><li class="flex items-start gap-2"><i class="fa-solid fa-check text-brand-400 mt-0.5"></i> Upload dokumen (Max 5MB)</li><li class="flex items-start gap-2"><i class="fa-solid fa-check text-brand-400 mt-0.5"></i> Status awal: Pending</li><li class="flex items-start gap-2"><i class="fa-solid fa-check text-brand-400 mt-0.5"></i> Notifikasi WA dikirim saat diverifikasi/ditolak</li></ul></div>
+                    <div class="glass rounded-2xl p-5">
+                        <h3 class="text-sm font-bold text-slate-300 mb-3 flex items-center gap-2"><i class="fa-solid fa-circle-info text-amber-400"></i> Panduan</h3>
+                        <ul class="space-y-2 text-xs text-slate-400">
+                            <li class="flex items-start gap-2"><i class="fa-solid fa-check text-brand-400 mt-0.5"></i> Isi data dan nomor WA aktif</li>
+                            <li class="flex items-start gap-2"><i class="fa-solid fa-check text-brand-400 mt-0.5"></i> Upload dokumen (Max 5MB)</li>
+                            <li class="flex items-start gap-2"><i class="fa-solid fa-check text-brand-400 mt-0.5"></i> Status awal: Pending</li>
+                            <li class="flex items-start gap-2"><i class="fa-solid fa-check text-brand-400 mt-0.5"></i> Notifikasi WA dikirim saat diverifikasi/ditolak</li>
+                        </ul>
+                    </div>
                 </div>
             </div>
         </section>
@@ -169,7 +236,7 @@
                 <div class="glass rounded-2xl p-6 sm:p-8 text-center">
                     <div class="w-16 h-16 mx-auto mb-4 rounded-2xl bg-surface-700 flex items-center justify-center"><i class="fa-solid fa-magnifying-glass-chart text-2xl text-brand-400"></i></div>
                     <h2 class="font-display text-xl font-bold text-white mb-2">Cek Status Dokumen</h2>
-                    <p class="text-sm text-slate-400 mb-6">Masukkan NIP Anda untuk melihat status verifikasi dokumen.</p>
+                    <p class="text-sm text-slate-400 mb-6">Masukkan NIP Anda untuk melihat status verifikasi.</p>
                     <div class="flex gap-3">
                         <input type="text" id="cekNipInput" class="input-field" placeholder="Masukkan 18 digit NIP" maxlength="18">
                         <button onclick="cekStatusNip()" class="btn-primary px-6 py-3 rounded-xl font-bold text-white flex-shrink-0"><i class="fa-solid fa-search mr-1"></i> Cek</button>
@@ -206,8 +273,21 @@
                 <div class="glass rounded-2xl overflow-hidden">
                     <div class="overflow-x-auto" style="max-height:500px; overflow-y:auto;">
                         <table class="data-table">
-                            <thead><tr><th style="width:40px;">No</th><th>Tanggal</th><th>Nama OPD</th><th>NIP</th><th>File</th><th>Status</th><th>Keterangan</th><th id="th-action" style="width:120px;">Aksi Admin</th></tr></thead>
-                            <tbody id="tableBody"><tr><td colspan="8" class="text-center text-slate-500 py-12">Memuat data...</td></tr></tbody>
+                            <thead>
+                                <tr>
+                                    <th style="width:40px;">No</th>
+                                    <th>Tanggal</th>
+                                    <th>Nama OPD</th>
+                                    <th>NIP</th>
+                                    <th>File</th>
+                                    <th>Status</th>
+                                    <th>Keterangan</th>
+                                    <th id="th-action" style="width:120px;">Aksi Admin</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tableBody">
+                                <tr><td colspan="8" class="text-center text-slate-500 py-12">Memuat data...</td></tr>
+                            </tbody>
                         </table>
                     </div>
                 </div>
@@ -216,16 +296,23 @@
     </main>
 
     <!-- MODAL -->
-    <div class="modal-overlay" id="modalOverlay" onclick="closeModal(event)"><div class="modal-box" id="modalBox"><div id="modalContent"></div></div></div>
+    <div class="modal-overlay" id="modalOverlay" onclick="closeModal(event)">
+        <div class="modal-box" id="modalBox"><div id="modalContent"></div></div>
+    </div>
     <!-- TOAST -->
     <div id="toast-container"></div>
 
 <script>
+// =============================================================
+// KONFIGURASI BACKEND
+// =============================================================
 const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw0m2pdDRclf-jNgBcrN5gFIiUZdQ-W_P3Hw8KgRg8tO_1XoXWZkSSkfYPWbx0Aktub/exec';
+
 const USERS = [
     { username: 'admin', password: 'admin123', role: 'admin', name: 'Administrator' },
-    { username: 'opd', password: 'opd123', role: 'user', name: 'Operator OPD' }
+    { username: 'opd', password: 'opd123', role: 'user', name: 'Staf OPD' }
 ];
+
 const MAX_FILE_SIZE = 5 * 1024 * 1024;
 let currentUser = null;
 let sheetData = [];
@@ -233,137 +320,468 @@ let selectedFile = null;
 let selectedFileBase64 = null;
 let nipChecking = false;
 
-const OPD_LIST = [''Dinas Pendidikan',
-    'Dinas Kesehatan',
-    'Dinas Pekerjaan Umum dan Penataan Ruang',
-    'Dinas Perhubungan',
-    'Dinas Sosial',
-    'Dinas Kependudukan dan Pencatatan Sipil',
-    'Dinas Perindustrian dan Tenagakerja',
-    'Dinas Keluarga Berencana Pemberdayaan Perempuan dan Perlindungan Anak',
-    'Dinas Lingkungan Hidup',
-    'Dinas Penanaman Modal dan Pelayanan Terpadu Satu Pintu',
-    'Dinas Perumahan dan Kawasan Permukiman',
-    'Dinas Pemuda dan Olahraga',
-    'Dinas Komunikasi dan Informatika',
-    'Dinas Pertanian Perinakanan dan Ketahanan Pangan',
-    'Dinas Koperasi Usaha Mikro dan Perdagangan',
-    'Dinas Peternakan dan Kesehatan Hewan',
-    'Dinas Perpustakaan Dan Kearsipan',
-    'Dinas Pemberdayaan Masyarakat dan Desa',
-    'Dinas Kebudayaan dan Pariwisata',
-    'Badan Kepegawaian dan Pengembangan Sumber Daya Manusia',
-    'Badan Perencanaan Pembangunan Riset dan Inovasi Daerah',
-    'Badan Pengelolaan Keuangan dan Aset Daerah',
-    'Badan Pendapatan Daerah',
-    'Badan Penanggulangan Bencana Daerah',
-    'Badan Kesatuan Bangsa dan Politik',
-    'Inspektorat',
-    'Satuan Polisi Pamong Praja',
-    'UOBK RSUD',
-    'Bagian Umum - Sekretariat Daerah',
-    'Bagian Hukum - Sekretariat Daerah',
-    'Bagian Perekonomian SDA - Sekretariat Daerah',
-    'Bagian Protokol dan Komunikasi Pimpinan - Sekretariat Daerah',
-    'Bagian Pemerintahan - Sekretariat Daerah',
-    'Bagian Administrasi Pembangunan - Sekretariat Daerah',
-    'Bagian Perencana Keuangan - Sekretariat Daerah',
-    'Bagian Organisasi - Sekretariat Daerah',
-    'Bagian Kesejahteraan Rakyat - Sekretariat Daerah',
-    'Bagian Pengadaan Barang Jasa - Sekretariat Daerah',
-    'Sekretariat DPRD',
-    'Kecamatan Arosbaya',
-    'Kecamatan Klampis',
-    'Kecamatan Bangkalan',
-    'Kecamatan Burneh',
-    'Kecamatan Socah',
-    'Kecamatan Kamal',
-    'Kecamatan Labang',
-    'Kecamatan Modung',
-    'Kecamatan Tragah',
-    'Kecamatan Sepulu',
-    'Kecamatan Tanjungbumi',
-    'Kecamatan Kwanyar',
-    'Kecamatan Konang',
-    'Kecamatan Kokop',
-    'Kecamatan Tanahmerah',
-    'Kecamatan Galis',
-    'Kecamatan Geger',
-    'Kecamatan Blega',
-    'Kelurahan Tonjung',
-    'Kelurahan Bancaran',
-    'Kelurahan Pejagan',
-    'Kelurahan Demangan',
-    'Kelurahan Kraton',
-    'Kelurahan Kemayoran',
-    'Kelurahan Mlajah',
-    'Kelurahan Pangeranan'];
+const OPD_LIST = [
+    'Dinas Pendidikan dan Kebudayaan', 'Dinas Kesehatan', 'Dinas Pekerjaan Umum dan Penataan Ruang',
+    'Dinas Perhubungan', 'Dinas Sosial', 'Dinas Kependudukan dan Pencatatan Sipil',
+    'Dinas Ketenagakerjaan', 'Dinas Pemberdayaan Perempuan dan Perlindungan Anak',
+    'Dinas Lingkungan Hidup', 'Dinas Penanaman Modal dan Pelayanan Terpadu Satu Pintu',
+    'Dinas Perumahan dan Kawasan Permukiman', 'Dinas Pemuda dan Olahraga',
+    'Dinas Komunikasi dan Informatika', 'Dinas Pertanian dan Perikanan',
+    'Dinas Perindustrian dan Perdagangan', 'Badan Kepegawaian Daerah',
+    'Badan Perencanaan Pembangunan Daerah', 'Badan Pengelolaan Keuangan dan Aset Daerah',
+    'Badan Pendapatan Daerah', 'Inspektorat', 'Sekretariat Daerah', 'Sekretariat DPRD',
+    'Kecamatan Kota Baru', 'Kecamatan Kota Timur', 'Kecamatan Kota Utara',
+    'Kecamatan Dumbo Raya', 'Kecamatan Tilongkabila'
+];
 
-// AUTH
-document.addEventListener('DOMContentLoaded', () => { checkAuth(); populateOpdSelect(); setupDragDrop(); setupNipValidation(); });
-function checkAuth() { const s = sessionStorage.getItem('simondoc_user'); if(s){ currentUser=JSON.parse(s); enterApp(); } else { document.getElementById('loginScreen').style.display='flex'; } }
-function handleLogin() { const u=document.getElementById('loginUsername').value.trim(); const p=document.getElementById('loginPassword').value; const e=document.getElementById('loginError'); if(!u||!p){e.classList.remove('hidden');e.innerHTML='<i class="fa-solid fa-circle-exclamation mr-1"></i> Isi semua kolom.';return;} const user=USERS.find(x=>x.username===u&&x.password===p); if(user){currentUser=user;sessionStorage.setItem('simondoc_user',JSON.stringify(user));e.classList.add('hidden');enterApp();showToast(`Selamat datang, ${user.name}!`,'success');}else{e.classList.remove('hidden');e.innerHTML='<i class="fa-solid fa-circle-exclamation mr-1"></i> Username atau Password salah.';} }
-function handleLogout() { currentUser=null; sessionStorage.removeItem('simondoc_user'); document.getElementById('loginScreen').style.display='flex'; sheetData=[]; }
-function enterApp() { document.getElementById('loginScreen').style.display='none'; updateUIForRole(); fetchSheetData(); }
-function updateUIForRole() { if(!currentUser)return; document.getElementById('userName').textContent=currentUser.name; const b=document.getElementById('userBadge'); if(currentUser.role==='admin'){b.className='badge badge-admin text-[0.7rem] py-1 px-2.5';b.innerHTML='<i class="fa-solid fa-shield-halved mr-1"></i> Admin';}else{b.className='badge badge-user text-[0.7rem] py-1 px-2.5';b.innerHTML='<i class="fa-solid fa-user mr-1"></i> OPD';} document.getElementById('tab-btn-monitoring').style.display=currentUser.role==='admin'?'inline-flex':'none'; document.getElementById('tab-btn-cek').style.display=currentUser.role==='user'?'inline-flex':'none'; const th=document.getElementById('th-action');if(th)th.style.display=currentUser.role==='admin'?'table-cell':'none'; switchTab(currentUser.role==='admin'?'monitoring':'upload'); }
+// ===============================================================
+// SISTEM LOGIN & OTENTIKASI
+// ===============================================================
+document.addEventListener('DOMContentLoaded', () => {
+    checkAuth();
+    populateOpdSelect();
+    setupDragDrop();
+    setupNipValidation();
+});
 
-function switchTab(t) { if(t==='monitoring'&&currentUser?.role!=='admin'){showToast('Akses ditolak.','error');return;} document.querySelectorAll('section[id^="tab-"]').forEach(e=>e.classList.add('hidden')); const el=document.getElementById('tab-'+t); if(el){el.classList.remove('hidden');el.classList.remove('animate-fade-up');void el.offsetWidth;el.classList.add('animate-fade-up');} document.querySelectorAll('#nav-tabs .tab-btn').forEach((b,i)=>{const tabs=['upload','cek','monitoring'];b.classList.toggle('active',tabs[i]===t);}); if(t==='monitoring')fetchSheetData(); }
+function checkAuth() {
+    const stored = sessionStorage.getItem('simondoc_user');
+    if (stored) {
+        currentUser = JSON.parse(stored);
+        enterApp();
+    } else {
+        document.getElementById('loginScreen').style.display = 'flex';
+    }
+}
 
-// FETCH
-function fetchSheetData() { showLoading('Memuat data...'); fetch(APPS_SCRIPT_URL).then(r=>r.json()).then(res=>{hideLoading();sheetData=Array.isArray(res)?res:[];renderAll();}).catch(()=>{hideLoading();sheetData=[];renderAll();}); }
-function renderAll() { renderStats(); renderTable(); }
+function handleLogin() {
+    const username = document.getElementById('loginUsername').value.trim();
+    const password = document.getElementById('loginPassword').value;
+    const errorEl = document.getElementById('loginError');
 
-// OPD & FILE
-function populateOpdSelect() { const s=document.getElementById('inputOpd'); OPD_LIST.forEach(o=>{const op=document.createElement('option');op.value=o;op.textContent=o;s.appendChild(op);}); }
-function setupDragDrop() { const z=document.getElementById('uploadZone'); z.addEventListener('dragover',e=>{e.preventDefault();z.classList.add('drag-over');}); z.addEventListener('dragleave',e=>{e.preventDefault();z.classList.remove('drag-over');}); z.addEventListener('drop',e=>{e.preventDefault();z.classList.remove('drag-over');if(e.dataTransfer.files.length)handleFileSelect(e.dataTransfer.files[0]);}); document.getElementById('inputFile').addEventListener('change',e=>{if(e.target.files.length)handleFileSelect(e.target.files[0]);}); }
-function handleFileSelect(f) { const ex='.'+f.name.split('.').pop().toLowerCase(); if(!['.pdf','.xlsx','.xls','.jpg','.jpeg','.png'].includes(ex)){showToast('Format tidak didukung.','error');return;} if(f.size>MAX_FILE_SIZE){showToast('Maks 5MB.','error');return;} selectedFile=f; const r=new FileReader(); r.onload=()=>{selectedFileBase64=r.result.split(',')[1];}; r.readAsDataURL(f); document.getElementById('uploadZone').classList.add('has-file'); document.getElementById('uploadPlaceholder').classList.add('hidden'); document.getElementById('uploadPreview').classList.remove('hidden'); document.getElementById('fileName').textContent=f.name; document.getElementById('fileSize').textContent=formatFileSize(f.size); const fi=document.getElementById('fileIcon'); const ft=getFileCategory(ex); if(ft==='pdf'){fi.className='w-12 h-12 rounded-xl flex items-center justify-center text-xl bg-rose-500/15 text-rose-400';fi.innerHTML='<i class="fa-solid fa-file-pdf"></i>';}else if(ft==='excel'){fi.className='w-12 h-12 rounded-xl flex items-center justify-center text-xl bg-brand-500/15 text-brand-400';fi.innerHTML='<i class="fa-solid fa-file-excel"></i>';}else{fi.className='w-12 h-12 rounded-xl flex items-center justify-center text-xl bg-amber-500/15 text-amber-400';fi.innerHTML='<i class="fa-solid fa-file-image"></i>';} }
-function removeFile() { selectedFile=null;selectedFileBase64=null;document.getElementById('inputFile').value='';document.getElementById('uploadZone').classList.remove('has-file');document.getElementById('uploadPlaceholder').classList.remove('hidden');document.getElementById('uploadPreview').classList.add('hidden'); }
+    if (!username || !password) {
+        errorEl.classList.remove('hidden');
+        errorEl.innerHTML = '<i class="fa-solid fa-circle-exclamation mr-1"></i> Username dan Password wajib diisi.';
+        return;
+    }
 
-// VALIDASI NIP
-function setupNipValidation() { const n=document.getElementById('inputNip'); n.addEventListener('input',()=>{n.value=n.value.replace(/[^0-9]/g,'');document.getElementById('nip-status-icon').classList.add('hidden');n.classList.remove('error','valid');document.getElementById('nip-hint').innerHTML='<span class="text-slate-500">Format: 18 digit</span>';}); n.addEventListener('blur',()=>{const v=n.value.trim();if(!v||v.length!==18)return;if(v.length===18)checkNipOnServer(v);}); }
-function checkNipOnServer(nip) { const i=document.getElementById('inputNip');const ic=document.getElementById('nip-status-icon');const h=document.getElementById('nip-hint'); const lm=sheetData.find(d=>d.nip===nip); if(lm){i.classList.add('error');ic.classList.remove('hidden');ic.innerHTML='<i class="fa-solid fa-circle-exclamation text-rose-400"></i>';h.innerHTML=`<span class="text-rose-400">Sudah terdaftar di ${lm.namaOpd}</span>`;showDuplicateModal(lm);return;} ic.classList.remove('hidden');ic.innerHTML='<i class="fa-solid fa-spinner fa-spin text-slate-400"></i>';nipChecking=true; fetch(APPS_SCRIPT_URL,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify({action:'checkNip',nip})}).then(r=>r.json()).then(res=>{nipChecking=false;if(res.exists){i.classList.add('error');ic.innerHTML='<i class="fa-solid fa-circle-exclamation text-rose-400"></i>';h.innerHTML=`<span class="text-rose-400">Sudah terdaftar</span>`;showDuplicateModal({nip,namaOpd:res.namaOpd});}else{i.classList.remove('error');i.classList.add('valid');ic.innerHTML='<i class="fa-solid fa-circle-check text-brand-400"></i>';h.innerHTML='<span class="text-brand-400">NIP tersedia</span>';}}).catch(()=>{nipChecking=false;i.classList.add('valid');ic.innerHTML='<i class="fa-solid fa-circle-check text-brand-400"></i>';h.innerHTML='<span class="text-brand-400">NIP tersedia</span>';}); }
-function showDuplicateModal(d) { showModal(`<div class="text-center mb-5"><div class="w-16 h-16 mx-auto rounded-full bg-rose-500/15 flex items-center justify-center mb-4"><i class="fa-solid fa-triangle-exclamation text-rose-400 text-2xl"></i></div><h3 class="font-display text-xl font-bold text-white mb-1">NIP Sudah Terdaftar</h3><p class="text-sm text-slate-400">NIP ini sudah pernah digunakan.</p></div><div class="bg-surface-900 rounded-xl p-4 mb-5 border border-surface-600 text-sm"><div class="flex justify-between"><span class="text-slate-400">NIP</span><span class="font-mono font-semibold text-white">${formatNip(d.nip)}</span></div><div class="flex justify-between mt-2"><span class="text-slate-400">OPD</span><span class="font-semibold text-white">${d.namaOpd||'-'}</span></div></div><button onclick="closeModal()" class="w-full py-3 rounded-xl font-bold text-white bg-rose-600 hover:bg-rose-500 transition">Tutup</button>`); }
+    const user = USERS.find(u => u.username === username && u.password === password);
 
-// SUBMIT
-function handleSubmit() { const opd=document.getElementById('inputOpd').value.trim();const nip=document.getElementById('inputNip').value.trim();const wa=document.getElementById('inputWa').value.trim(); if(!opd){showToast('Pilih OPD.','error');return;} if(!nip||nip.length!==18){showToast('NIP harus 18 digit.','error');return;} if(!wa){showToast('Masukkan No. WhatsApp.','error');return;} if(!selectedFile){showToast('Upload dokumen.','error');return;} if(!selectedFileBase64){showToast('File diproses...','warning');return;} if(nipChecking){showToast('Cek NIP...','warning');return;} const btn=document.getElementById('btnSubmit');const bt=document.getElementById('btnText'); btn.disabled=true;bt.innerHTML='<i class="fa-solid fa-spinner fa-spin mr-2"></i> Mengirim...'; const ex='.'+selectedFile.name.split('.').pop().toLowerCase(); fetch(APPS_SCRIPT_URL,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify({action:'submit',namaOpd:opd,nip:nip,fileName:selectedFile.name,fileType:getFileCategory(ex),fileMime:selectedFile.type,fileBase64:selectedFileBase64,noWa:wa})}).then(r=>r.json()).then(res=>{btn.disabled=false;bt.innerHTML='<i class="fa-solid fa-paper-plane mr-1"></i> Kirim'; if(res.success){showToast('Dokumen berhasil diupload! Status: Pending','success');document.getElementById('inputOpd').value='';document.getElementById('inputNip').value='';document.getElementById('inputWa').value='';document.getElementById('inputNip').classList.remove('valid','error');document.getElementById('nip-status-icon').classList.add('hidden');document.getElementById('nip-hint').innerHTML='<span class="text-slate-500">Format: 18 digit</span>';removeFile();fetchSheetData();}else if(res.duplicate){showDuplicateModal({nip,namaOpd:'Spreadsheet'});}else{showToast('Gagal: '+res.message,'error');}}).catch(()=>{btn.disabled=false;bt.innerHTML='<i class="fa-solid fa-paper-plane mr-1"></i> Kirim';showToast('Gagal kirim.','error');}); }
+    if (user) {
+        currentUser = user;
+        sessionStorage.setItem('simondoc_user', JSON.stringify(user));
+        errorEl.classList.add('hidden');
+        enterApp();
+        showToast('Selamat datang, ' + user.name + '!', 'success');
+    } else {
+        errorEl.classList.remove('hidden');
+        errorEl.innerHTML = '<i class="fa-solid fa-circle-exclamation mr-1"></i> Username atau Password salah.';
+    }
+}
 
+function handleLogout() {
+    currentUser = null;
+    sessionStorage.removeItem('simondoc_user');
+    document.getElementById('loginScreen').style.display = 'flex';
+    document.getElementById('loginUsername').value = '';
+    document.getElementById('loginPassword').value = '';
+    sheetData = [];
+}
+
+function enterApp() {
+    document.getElementById('loginScreen').style.display = 'none';
+    updateUIForRole();
+    fetchSheetData();
+}
+
+function updateUIForRole() {
+    if (!currentUser) return;
+    document.getElementById('userName').textContent = currentUser.name;
+    const badge = document.getElementById('userBadge');
+    
+    if (currentUser.role === 'admin') {
+        badge.className = 'badge badge-admin text-[0.7rem] py-1 px-2.5';
+        badge.innerHTML = '<i class="fa-solid fa-shield-halved mr-1"></i> Admin';
+        document.getElementById('tab-btn-monitoring').style.display = 'inline-flex';
+        document.getElementById('tab-btn-cek').style.display = 'none';
+        switchTab('monitoring');
+    } else {
+        badge.className = 'badge badge-user text-[0.7rem] py-1 px-2.5';
+        badge.innerHTML = '<i class="fa-solid fa-user mr-1"></i> OPD';
+        document.getElementById('tab-btn-monitoring').style.display = 'none';
+        document.getElementById('tab-btn-cek').style.display = 'inline-flex';
+        switchTab('upload');
+    }
+}
+
+function switchTab(tabName) {
+    if (tabName === 'monitoring' && currentUser && currentUser.role !== 'admin') {
+        showToast('Akses ditolak. Hanya Admin.', 'error');
+        return;
+    }
+
+    document.querySelectorAll('section[id^="tab-"]').forEach(el => el.classList.add('hidden'));
+    const tabEl = document.getElementById('tab-' + tabName);
+    if (tabEl) {
+        tabEl.classList.remove('hidden');
+        tabEl.classList.remove('animate-fade-up');
+        void tabEl.offsetWidth;
+        tabEl.classList.add('animate-fade-up');
+    }
+
+    const tabs = ['upload', 'cek', 'monitoring'];
+    document.querySelectorAll('#nav-tabs .tab-btn').forEach((btn, i) => {
+        btn.classList.toggle('active', tabs[i] === tabName);
+    });
+
+    if (tabName === 'monitoring') fetchSheetData();
+}
+
+// ===============================================================
+// FETCH & RENDER DATA
+// ===============================================================
+function fetchSheetData() {
+    showLoading('Memuat data...');
+    fetch(APPS_SCRIPT_URL)
+    .then(r => r.json())
+    .then(res => {
+        hideLoading();
+        sheetData = Array.isArray(res) ? res : [];
+        renderAll();
+    })
+    .catch(() => {
+        hideLoading();
+        sheetData = [];
+        renderAll();
+    });
+}
+
+function renderAll() {
+    renderStats();
+    if (currentUser && currentUser.role === 'admin') renderTable();
+}
+
+function renderStats() {
+    animateCounter('stat-total', sheetData.length);
+    animateCounter('stat-pending', sheetData.filter(d => d.status === 'Pending').length);
+    animateCounter('stat-verified', sheetData.filter(d => d.status === 'Terverifikasi').length);
+    animateCounter('stat-rejected', sheetData.filter(d => d.status === 'Ditolak').length);
+}
+
+function getFilteredData() {
+    const search = (document.getElementById('searchInput')?.value || '').toLowerCase();
+    const filterType = document.getElementById('filterType')?.value || '';
+    const filterStatus = document.getElementById('filterStatus')?.value || '';
+    const startDate = document.getElementById('filterStartDate')?.value || '';
+    const endDate = document.getElementById('filterEndDate')?.value || '';
+
+    return sheetData.filter(d => {
+        const matchSearch = !search || d.namaOpd.toLowerCase().includes(search) || d.nip.includes(search);
+        const matchType = !filterType || d.fileType === filterType;
+        const matchStatus = !filterStatus || d.status === filterStatus;
+        let matchDate = true;
+        if (d.tanggal) {
+            const dateOnly = d.tanggal.slice(0, 10);
+            if (startDate && dateOnly < startDate) matchDate = false;
+            if (endDate && dateOnly > endDate) matchDate = false;
+        } else if (startDate || endDate) {
+            matchDate = false;
+        }
+        return matchSearch && matchType && matchStatus && matchDate;
+    }).sort((a, b) => new Date(b.tanggal) - new Date(a.tanggal));
+}
+
+function applyFilters() { renderTable(); }
+function resetFilters() {
+    document.getElementById('searchInput').value = '';
+    document.getElementById('filterType').value = '';
+    document.getElementById('filterStatus').value = '';
+    document.getElementById('filterStartDate').value = '';
+    document.getElementById('filterEndDate').value = '';
+    applyFilters();
+}
+
+function renderTable() {
+    const tbody = document.getElementById('tableBody');
+    const filtered = getFilteredData();
+
+    if (filtered.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="8" class="text-center text-slate-500 py-12">Tidak ada data</td></tr>';
+        return;
+    }
+
+    tbody.innerHTML = filtered.map((d, i) => {
+        const statusClass = d.status === 'Terverifikasi' ? 'badge-verified' : d.status === 'Ditolak' ? 'badge-rejected' : 'badge-pending';
+        let actionHtml = '-';
+        
+        if (currentUser && currentUser.role === 'admin') {
+            if (d.status === 'Pending') {
+                actionHtml = `
+                    <div class="flex gap-1">
+                        <button onclick="verifyEntry('${d.nip}')" class="w-8 h-8 rounded-lg bg-brand-500/10 flex items-center justify-center text-brand-400 hover:bg-brand-500/20 transition" title="Verifikasi"><i class="fa-solid fa-check text-xs"></i></button>
+                        <button onclick="rejectEntry('${d.nip}')" class="w-8 h-8 rounded-lg bg-amber-500/10 flex items-center justify-center text-amber-400 hover:bg-amber-500/20 transition" title="Tolak"><i class="fa-solid fa-xmark text-xs"></i></button>
+                        <button onclick="deleteEntry('${d.nip}')" class="w-8 h-8 rounded-lg bg-rose-500/10 flex items-center justify-center text-rose-400 hover:bg-rose-500/20 transition" title="Hapus"><i class="fa-solid fa-trash text-xs"></i></button>
+                    </div>`;
+            } else {
+                actionHtml = `
+                    <div class="flex gap-1">
+                        <button onclick="deleteEntry('${d.nip}')" class="w-8 h-8 rounded-lg bg-rose-500/10 flex items-center justify-center text-rose-400 hover:bg-rose-500/20 transition" title="Hapus"><i class="fa-solid fa-trash text-xs"></i></button>
+                    </div>`;
+            }
+        }
+
+        return `
+            <tr>
+                <td class="text-slate-500 font-mono text-xs">${i + 1}</td>
+                <td class="text-xs text-slate-400 whitespace-nowrap">${formatTanggal(d.tanggal)}</td>
+                <td class="text-sm font-semibold text-white max-w-[150px] truncate">${d.namaOpd}</td>
+                <td class="font-mono text-xs text-slate-300">${formatNip(d.nip)}</td>
+                <td class="text-xs text-slate-300 max-w-[120px] truncate">${d.fileName || '-'}</td>
+                <td><span class="badge ${statusClass}">${d.status}</span></td>
+                <td class="text-xs text-slate-400 max-w-[120px] truncate">${d.keterangan || '-'}</td>
+                <td>${actionHtml}</td>
+            </tr>`;
+    }).join('');
+}
+
+// ===============================================================
+// OPD, FILE, NIP HELPERS
+// ===============================================================
+function populateOpdSelect() {
+    const select = document.getElementById('inputOpd');
+    OPD_LIST.forEach(opd => {
+        const opt = document.createElement('option');
+        opt.value = opd; opt.textContent = opd; select.appendChild(opt);
+    });
+}
+
+function setupDragDrop() {
+    const zone = document.getElementById('uploadZone');
+    zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('drag-over'); });
+    zone.addEventListener('dragleave', e => { e.preventDefault(); zone.classList.remove('drag-over'); });
+    zone.addEventListener('drop', e => { e.preventDefault(); zone.classList.remove('drag-over'); if (e.dataTransfer.files.length) handleFileSelect(e.dataTransfer.files[0]); });
+    document.getElementById('inputFile').addEventListener('change', e => { if (e.target.files.length) handleFileSelect(e.target.files[0]); });
+}
+
+function handleFileSelect(file) {
+    const allowedExt = ['.pdf', '.xlsx', '.xls', '.jpg', '.jpeg', '.png'];
+    const ext = '.' + file.name.split('.').pop().toLowerCase();
+    if (!allowedExt.includes(ext)) { showToast('Format tidak didukung.', 'error'); return; }
+    if (file.size > MAX_FILE_SIZE) { showToast('Maks 5MB.', 'error'); return; }
+
+    selectedFile = file;
+    const reader = new FileReader();
+    reader.onload = () => { selectedFileBase64 = reader.result.split(',')[1]; };
+    reader.readAsDataURL(file);
+
+    document.getElementById('uploadZone').classList.add('has-file');
+    document.getElementById('uploadPlaceholder').classList.add('hidden');
+    document.getElementById('uploadPreview').classList.remove('hidden');
+    document.getElementById('fileName').textContent = file.name;
+    document.getElementById('fileSize').textContent = formatFileSize(file.size);
+
+    const fileIcon = document.getElementById('fileIcon');
+    const fType = getFileCategory(ext);
+    if (fType === 'pdf') { fileIcon.className = 'w-12 h-12 rounded-xl flex items-center justify-center text-xl bg-rose-500/15 text-rose-400'; fileIcon.innerHTML = '<i class="fa-solid fa-file-pdf"></i>'; }
+    else if (fType === 'excel') { fileIcon.className = 'w-12 h-12 rounded-xl flex items-center justify-center text-xl bg-brand-500/15 text-brand-400'; fileIcon.innerHTML = '<i class="fa-solid fa-file-excel"></i>'; }
+    else { fileIcon.className = 'w-12 h-12 rounded-xl flex items-center justify-center text-xl bg-amber-500/15 text-amber-400'; fileIcon.innerHTML = '<i class="fa-solid fa-file-image"></i>'; }
+}
+
+function removeFile() {
+    selectedFile = null; selectedFileBase64 = null; document.getElementById('inputFile').value = '';
+    document.getElementById('uploadZone').classList.remove('has-file');
+    document.getElementById('uploadPlaceholder').classList.remove('hidden');
+    document.getElementById('uploadPreview').classList.add('hidden');
+}
+
+function setupNipValidation() {
+    const nipInput = document.getElementById('inputNip');
+    nipInput.addEventListener('input', () => {
+        nipInput.value = nipInput.value.replace(/[^0-9]/g, '');
+        document.getElementById('nip-status-icon').classList.add('hidden');
+        nipInput.classList.remove('error', 'valid');
+        document.getElementById('nip-hint').innerHTML = '<span class="text-slate-500">Format: 18 digit</span>';
+    });
+    nipInput.addEventListener('blur', () => {
+        const v = nipInput.value.trim();
+        if (v.length === 18) checkNipOnServer(v);
+    });
+}
+
+function checkNipOnServer(nip) {
+    const icon = document.getElementById('nip-status-icon');
+    const hint = document.getElementById('nip-hint');
+    const nipInput = document.getElementById('inputNip');
+    
+    const localMatch = sheetData.find(d => d.nip === nip);
+    if (localMatch) {
+        nipInput.classList.add('error'); icon.classList.remove('hidden');
+        icon.innerHTML = '<i class="fa-solid fa-circle-exclamation text-rose-400"></i>';
+        hint.innerHTML = '<span class="text-rose-400">Sudah terdaftar</span>';
+        showDuplicateModal(localMatch); return;
+    }
+
+    icon.classList.remove('hidden'); icon.innerHTML = '<i class="fa-solid fa-spinner fa-spin text-slate-400"></i>';
+    nipChecking = true;
+    fetch(APPS_SCRIPT_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain' }, body: JSON.stringify({ action: 'checkNip', nip }) })
+    .then(r => r.json()).then(res => {
+        nipChecking = false;
+        if (res.exists) { nipInput.classList.add('error'); icon.innerHTML = '<i class="fa-solid fa-circle-exclamation text-rose-400"></i>'; hint.innerHTML = '<span class="text-rose-400">Sudah terdaftar</span>'; showDuplicateModal({nip, namaOpd: res.namaOpd}); }
+        else { nipInput.classList.remove('error'); nipInput.classList.add('valid'); icon.innerHTML = '<i class="fa-solid fa-circle-check text-brand-400"></i>'; hint.innerHTML = '<span class="text-brand-400">NIP tersedia</span>'; }
+    }).catch(() => { nipChecking = false; nipInput.classList.add('valid'); icon.innerHTML = '<i class="fa-solid fa-circle-check text-brand-400"></i>'; hint.innerHTML = '<span class="text-brand-400">NIP tersedia</span>'; });
+}
+
+function showDuplicateModal(d) {
+    const content = `
+        <div class="text-center mb-5"><div class="w-16 h-16 mx-auto rounded-full bg-rose-500/15 flex items-center justify-center mb-4"><i class="fa-solid fa-triangle-exclamation text-rose-400 text-2xl"></i></div><h3 class="font-display text-xl font-bold text-white mb-1">NIP Sudah Terdaftar</h3><p class="text-sm text-slate-400">NIP ini sudah pernah digunakan.</p></div>
+        <div class="bg-surface-900 rounded-xl p-4 mb-5 border border-surface-600 text-sm"><div class="flex justify-between"><span class="text-slate-400">NIP</span><span class="font-mono font-semibold text-white">${formatNip(d.nip)}</span></div><div class="flex justify-between mt-2"><span class="text-slate-400">OPD</span><span class="font-semibold text-white">${d.namaOpd || '-'}</span></div></div>
+        <button onclick="closeModal()" class="w-full py-3 rounded-xl font-bold text-white bg-rose-600 hover:bg-rose-500 transition">Tutup</button>`;
+    showModal(content);
+}
+
+// ===============================================================
 // WORKFLOW ACTIONS (ADMIN)
-function verifyEntry(nip) { if(currentUser?.role!=='admin')return; fetch(APPS_SCRIPT_URL,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify({action:'verify',nip})}).then(r=>r.json()).then(res=>{if(res.success){showToast('Dokumen Terverifikasi! WA terkirim.','success');fetchSheetData();}else{showToast('Gagal: '+res.message,'error');}}).catch(()=>showToast('Gagal.','error')); }
-function rejectEntry(nip) { if(currentUser?.role!=='admin')return; showModal(`<div class="text-center mb-5"><div class="w-16 h-16 mx-auto rounded-full bg-rose-500/15 flex items-center justify-center mb-4"><i class="fa-solid fa-ban text-rose-400 text-2xl"></i></div><h3 class="font-display text-lg font-bold text-white mb-1">Tolak Dokumen?</h3><p class="text-sm text-slate-400">Notifikasi penolakan akan dikirim via WhatsApp.</p></div><div class="mb-5"><label class="block text-sm font-semibold text-slate-300 mb-2">Alasan Penolakan</label><textarea id="rejectReason" class="input-field" rows="3" placeholder="Tulis alasan penolakan..."></textarea></div><div class="flex gap-3"><button onclick="closeModal()" class="flex-1 py-3 rounded-xl font-semibold glass-light text-slate-300 hover:text-white transition">Batal</button><button onclick="confirmReject('${nip}')" class="flex-1 py-3 rounded-xl font-bold text-white bg-rose-600 hover:bg-rose-500 transition">Tolak</button></div>`); }
-function confirmReject(nip) { const reason=document.getElementById('rejectReason').value.trim()||'Tidak memenuhi ketentuan'; fetch(APPS_SCRIPT_URL,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify({action:'reject',nip:nip,reason:reason})}).then(r=>r.json()).then(res=>{closeModal();if(res.success){showToast('Dokumen ditolak! WA terkirim.','success');fetchSheetData();}else{showToast('Gagal: '+res.message,'error');}}).catch(()=>{closeModal();showToast('Gagal.','error');}); }
-function deleteEntry(nip) { if(currentUser?.role!=='admin')return; showModal(`<div class="text-center mb-5"><div class="w-16 h-16 mx-auto rounded-full bg-amber-500/15 flex items-center justify-center mb-4"><i class="fa-solid fa-trash-can text-amber-400 text-2xl"></i></div><h3 class="font-display text-lg font-bold text-white mb-1">Hapus Data?</h3><p class="text-sm text-slate-400">NIP: ${nip}</p></div><div class="flex gap-3"><button onclick="closeModal()" class="flex-1 py-3 rounded-xl font-semibold glass-light text-slate-300 hover:text-white transition">Batal</button><button onclick="confirmDelete('${nip}')" class="flex-1 py-3 rounded-xl font-bold text-white bg-rose-600 hover:bg-rose-500 transition">Hapus</button></div>`); }
-function confirmDelete(nip) { fetch(APPS_SCRIPT_URL,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify({action:'delete',nip})}).then(r=>r.json()).then(res=>{closeModal();if(res.success){showToast('Dihapus.','success');fetchSheetData();}else{showToast('Gagal.','error');}}).catch(()=>{closeModal();showToast('Gagal.','error');}); }
+// ===============================================================
+function verifyEntry(nip) {
+    if (currentUser?.role !== 'admin') return;
+    fetch(APPS_SCRIPT_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain' }, body: JSON.stringify({ action: 'verify', nip }) })
+    .then(r => r.json()).then(res => {
+        if (res.success) { showToast('Dokumen Terverifikasi! WA terkirim.', 'success'); fetchSheetData(); }
+        else showToast('Gagal: ' + res.message, 'error');
+    }).catch(() => showToast('Gagal.', 'error'));
+}
+
+function rejectEntry(nip) {
+    if (currentUser?.role !== 'admin') return;
+    const content = `
+        <div class="text-center mb-5"><div class="w-16 h-16 mx-auto rounded-full bg-rose-500/15 flex items-center justify-center mb-4"><i class="fa-solid fa-ban text-rose-400 text-2xl"></i></div><h3 class="font-display text-lg font-bold text-white mb-1">Tolak Dokumen?</h3><p class="text-sm text-slate-400">Notifikasi penolakan akan dikirim via WhatsApp.</p></div>
+        <div class="mb-5"><label class="block text-sm font-semibold text-slate-300 mb-2">Alasan Penolakan</label><textarea id="rejectReason" class="input-field" rows="3" placeholder="Tulis alasan penolakan..."></textarea></div>
+        <div class="flex gap-3"><button onclick="closeModal()" class="flex-1 py-3 rounded-xl font-semibold glass-light text-slate-300 hover:text-white transition">Batal</button><button onclick="confirmReject('${nip}')" class="flex-1 py-3 rounded-xl font-bold text-white bg-rose-600 hover:bg-rose-500 transition">Tolak</button></div>`;
+    showModal(content);
+}
+
+function confirmReject(nip) {
+    const reason = document.getElementById('rejectReason').value.trim() || 'Tidak memenuhi ketentuan';
+    fetch(APPS_SCRIPT_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain' }, body: JSON.stringify({ action: 'reject', nip, reason }) })
+    .then(r => r.json()).then(res => {
+        closeModal();
+        if (res.success) { showToast('Dokumen ditolak! WA terkirim.', 'success'); fetchSheetData(); }
+        else showToast('Gagal: ' + res.message, 'error');
+    }).catch(() => { closeModal(); showToast('Gagal.', 'error'); });
+}
+
+function deleteEntry(nip) {
+    if (currentUser?.role !== 'admin') return;
+    const content = `
+        <div class="text-center mb-5"><div class="w-16 h-16 mx-auto rounded-full bg-amber-500/15 flex items-center justify-center mb-4"><i class="fa-solid fa-trash-can text-amber-400 text-2xl"></i></div><h3 class="font-display text-lg font-bold text-white mb-1">Hapus Data?</h3><p class="text-sm text-slate-400">NIP: ${nip}</p></div>
+        <div class="flex gap-3"><button onclick="closeModal()" class="flex-1 py-3 rounded-xl font-semibold glass-light text-slate-300 hover:text-white transition">Batal</button><button onclick="confirmDelete('${nip}')" class="flex-1 py-3 rounded-xl font-bold text-white bg-rose-600 hover:bg-rose-500 transition">Hapus</button></div>`;
+    showModal(content);
+}
+
+function confirmDelete(nip) {
+    fetch(APPS_SCRIPT_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain' }, body: JSON.stringify({ action: 'delete', nip }) })
+    .then(r => r.json()).then(res => { closeModal(); if (res.success) { showToast('Dihapus.', 'success'); fetchSheetData(); } else showToast('Gagal.', 'error'); })
+    .catch(() => { closeModal(); showToast('Gagal.', 'error'); });
+}
+
+// SUBMIT FORM
+function handleSubmit() {
+    const opd = document.getElementById('inputOpd').value.trim();
+    const nip = document.getElementById('inputNip').value.trim();
+    const wa = document.getElementById('inputWa').value.trim();
+    
+    if (!opd) { showToast('Pilih OPD.', 'error'); return; }
+    if (!nip || nip.length !== 18) { showToast('NIP harus 18 digit.', 'error'); return; }
+    if (!wa) { showToast('Masukkan No. WhatsApp.', 'error'); return; }
+    if (!selectedFile) { showToast('Upload dokumen.', 'error'); return; }
+    if (!selectedFileBase64) { showToast('File diproses...', 'warning'); return; }
+    if (nipChecking) { showToast('Cek NIP...', 'warning'); return; }
+
+    const btn = document.getElementById('btnSubmit');
+    const btnText = document.getElementById('btnText');
+    btn.disabled = true;
+    btnText.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i> Mengirim...';
+
+    const ext = '.' + selectedFile.name.split('.').pop().toLowerCase();
+    fetch(APPS_SCRIPT_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain' },
+        body: JSON.stringify({
+            action: 'submit', namaOpd: opd, nip: nip, fileName: selectedFile.name,
+            fileType: getFileCategory(ext), fileMime: selectedFile.type,
+            fileBase64: selectedFileBase64, noWa: wa
+        })
+    })
+    .then(r => r.json()).then(res => {
+        btn.disabled = false; btnText.innerHTML = '<i class="fa-solid fa-paper-plane mr-1"></i> Kirim';
+        if (res.success) {
+            showToast('Dokumen berhasil diupload! Status: Pending', 'success');
+            document.getElementById('inputOpd').value = ''; document.getElementById('inputNip').value = ''; document.getElementById('inputWa').value = '';
+            document.getElementById('inputNip').classList.remove('valid', 'error');
+            document.getElementById('nip-status-icon').classList.add('hidden');
+            document.getElementById('nip-hint').innerHTML = '<span class="text-slate-500">Format: 18 digit</span>';
+            removeFile(); fetchSheetData();
+        } else if (res.duplicate) { showDuplicateModal({nip, namaOpd: 'Spreadsheet'}); }
+        else showToast('Gagal: ' + res.message, 'error');
+    }).catch(() => { btn.disabled = false; btnText.innerHTML = '<i class="fa-solid fa-paper-plane mr-1"></i> Kirim'; showToast('Gagal kirim.', 'error'); });
+}
 
 // CEK STATUS (OPD)
-function cekStatusNip() { const nip=document.getElementById('cekNipInput').value.trim(); if(nip.length!==18){showToast('Masukkan 18 digit NIP.','error');return;} const res=document.getElementById('cekResult'); const d=sheetData.find(x=>x.nip===nip); if(d){ const sc=d.status==='Terverifikasi'?'badge-verified':d.status==='Ditolak'?'badge-rejected':'badge-pending'; res.innerHTML=`<div class="glass-light rounded-xl p-4 text-left"><div class="flex justify-between items-center mb-2"><span class="text-sm text-slate-400">Status Dokumen</span><span class="badge ${sc}">${d.status}</span></div><div class="text-xs text-slate-400 space-y-1"><p>OPD: <span class="text-white font-semibold">${d.namaOpd}</span></p><p>File: <span class="text-white font-semibold">${d.fileName}</span></p>${d.keterangan?`<p>Keterangan: <span class="text-amber-400 font-semibold">${d.keterangan}</span></p>`:''}</div></div>`; } else { res.innerHTML=`<div class="glass-light rounded-xl p-4 text-center text-rose-400 text-sm"><i class="fa-solid fa-circle-xmark mr-1"></i> NIP tidak ditemukan dalam data.</div>`; } res.classList.remove('hidden'); }
-
-// FILTER & RENDER
-function getFilteredData() { const s=(document.getElementById('searchInput')?.value||'').toLowerCase(); const ft=document.getElementById('filterType')?.value||''; const fs=document.getElementById('filterStatus')?.value||''; const sd=document.getElementById('filterStartDate')?.value||''; const ed=document.getElementById('filterEndDate')?.value||''; return sheetData.filter(d=>{const ms=!s||d.namaOpd.toLowerCase().includes(s)||d.nip.includes(s);const mt=!ft||d.fileType===ft;const mst=!fs||d.status===fs;let md=true;if(d.tanggal){const dt=d.tanggal.slice(0,10);if(sd&&dt<sd)md=false;if(ed&&dt>ed)md=false;}else if(sd||ed)md=false;return ms&&mt&&mst&&md;}).sort((a,b)=>new Date(b.tanggal)-new Date(a.tanggal)); }
-function applyFilters() { renderTable(); }
-function resetFilters() { document.getElementById('searchInput').value='';document.getElementById('filterType').value='';document.getElementById('filterStatus').value='';document.getElementById('filterStartDate').value='';document.getElementById('filterEndDate').value='';applyFilters(); }
-
-function renderStats() { animateCounter('stat-total',sheetData.length);animateCounter('stat-pending',sheetData.filter(d=>d.status==='Pending').length);animateCounter('stat-verified',sheetData.filter(d=>d.status==='Terverifikasi').length);animateCounter('stat-rejected',sheetData.filter(d=>d.status==='Ditolak').length); }
-
-function renderTable() { const tb=document.getElementById('tableBody'); const fd=getFilteredData(); const isA=currentUser?.role==='admin'; if(!fd.length){tb.innerHTML=`<tr><td colspan="8" class="text-center text-slate-500 py-12">Tidak ada data</td></tr>`;return;} tb.innerHTML=fd.map((d,i)=>{ const sc=d.status==='Terverifikasi'?'badge-verified':d.status==='Ditolak'?'badge-rejected':'badge-pending'; const act=d.status==='Pending'?`<div class="flex gap-1"><button onclick="verifyEntry('${d.nip}')" class="w-8 h-8 rounded-lg bg-brand-500/10 flex items-center justify-center text-brand-400 hover:bg-brand-500/20 transition" title="Verifikasi"><i class="fa-solid fa-check text-xs"></i></button><button onclick="rejectEntry('${d.nip}')" class="w-8 h-8 rounded-lg bg-amber-500/10 flex items-center justify-center text-amber-400 hover:bg-amber-500/20 transition" title="Tolak"><i class="fa-solid fa-xmark text-xs"></i></button><button onclick="deleteEntry('${d.nip}')" class="w-8 h-8 rounded-lg bg-rose-500/10 flex items-center justify-center text-rose-400 hover:bg-rose-500/20 transition" title="Hapus"><i class="fa-solid fa-trash text-xs"></i></button></div>`:`<div class="flex gap-1"><button onclick="deleteEntry('${d.nip}')" class="w-8 h-8 rounded-lg bg-rose-500/10 flex items-center justify-center text-rose-400 hover:bg-rose-500/20 transition" title="Hapus"><i class="fa-solid fa-trash text-xs"></i></button></div>`; return `<tr><td class="text-slate-500 font-mono text-xs">${i+1}</td><td class="text-xs text-slate-400 whitespace-nowrap">${formatTanggal(d.tanggal)}</td><td class="text-sm font-semibold text-white max-w-[150px] truncate">${d.namaOpd}</td><td class="font-mono text-xs text-slate-300">${formatNip(d.nip)}</td><td class="text-xs text-slate-300 max-w-[120px] truncate">${d.fileName||'-'}</td><td><span class="badge ${sc}">${d.status}</span></td><td class="text-xs text-slate-400 max-w-[120px] truncate">${d.keterangan||'-'}</td><td>${isA?act:'-'}</td></tr>`;}).join(''); }
+function cekStatusNip() {
+    const nip = document.getElementById('cekNipInput').value.trim();
+    if (nip.length !== 18) { showToast('Masukkan 18 digit NIP.', 'error'); return; }
+    const resEl = document.getElementById('cekResult');
+    const d = sheetData.find(x => x.nip === nip);
+    if (d) {
+        const sc = d.status === 'Terverifikasi' ? 'badge-verified' : d.status === 'Ditolak' ? 'badge-rejected' : 'badge-pending';
+        const ketHtml = d.keterangan ? `<p>Keterangan: <span class="text-amber-400 font-semibold">${d.keterangan}</span></p>` : '';
+        resEl.innerHTML = `
+            <div class="glass-light rounded-xl p-4 text-left">
+                <div class="flex justify-between items-center mb-2"><span class="text-sm text-slate-400">Status Dokumen</span><span class="badge ${sc}">${d.status}</span></div>
+                <div class="text-xs text-slate-400 space-y-1">
+                    <p>OPD: <span class="text-white font-semibold">${d.namaOpd}</span></p>
+                    <p>File: <span class="text-white font-semibold">${d.fileName}</span></p>
+                    ${ketHtml}
+                </div>
+            </div>`;
+    } else {
+        resEl.innerHTML = `<div class="glass-light rounded-xl p-4 text-center text-rose-400 text-sm"><i class="fa-solid fa-circle-xmark mr-1"></i> NIP tidak ditemukan dalam data.</div>`;
+    }
+    resEl.classList.remove('hidden');
+}
 
 // PRINT
-function printRecap() { if(currentUser?.role!=='admin')return; const fd=getFilteredData(); if(!fd.length)return; const sdv=document.getElementById('filterStartDate').value;const edv=document.getElementById('filterEndDate').value; let pt='Semua Periode';if(sdv&&edv)pt=`${formatDateID(sdv)} s/d ${formatDateID(edv)}`; const os={};fd.forEach(d=>{os[d.namaOpd]=(os[d.namaOpd]||0)+1;}); const se=Object.entries(os).sort((a,b)=>b[1]-a[1]); let tr=fd.map((d,i)=>`<tr><td style="text-align:center;">${i+1}</td><td>${formatTanggal(d.tanggal)}</td><td>${d.namaOpd}</td><td>${formatNip(d.nip)}</td><td>${d.fileName||'-'}</td><td style="text-align:center;">${d.status}</td><td>${d.keterangan||'-'}</td></tr>`).join(''); let sr=se.map(([n,c])=>`<tr><td>${n}</td><td style="text-align:right;font-weight:bold;">${c}</td></tr>`).join(''); const ph=`<!DOCTYPE html><html><head><title>Rekap SIMONDA</title><style>body{font-family:sans-serif;margin:20px;color:#1e293b;}h2{text-align:center;}table{width:100%;border-collapse:collapse;margin-bottom:30px;font-size:12px;}th,td{border:1px solid #cbd5e1;padding:8px;}th{background:#f1f5f9;}.summary-table{width:50%;margin:auto;}</style></head><body><h2>Rekapitulasi Dokumen OPD</h2><p style="text-align:center;color:#64748b;">${pt} | Total: ${fd.length}</p><table><thead><tr><th>No</th><th>Tanggal</th><th>OPD</th><th>NIP</th><th>File</th><th>Status</th><th>Keterangan</th></tr></thead><tbody>${tr}</tbody></table><hr><h3 style="text-align:center;">Rekap Per OPD</h3><table class="summary-table"><thead><tr><th>OPD</th><th style="text-align:right;">Jumlah</th></tr></thead><tbody>${sr}</tbody></table><p style="text-align:right;margin-top:50px;font-size:13px;">Dicetak: ${new Date().toLocaleDateString('id-ID',{weekday:'long',year:'numeric',month:'long',day:'numeric'})}</p><script>window.onload=()=>window.print();<\/script></body></html>`; window.open('','_blank').document.write(ph); }
+function printRecap() {
+    if (currentUser?.role !== 'admin') return;
+    const fd = getFilteredData();
+    if (!fd.length) return;
+    const sdv = document.getElementById('filterStartDate').value;
+    const edv = document.getElementById('filterEndDate').value;
+    let pt = 'Semua Periode';
+    if (sdv && edv) pt = formatDateID(sdv) + ' s/d ' + formatDateID(edv);
+    const os = {}; fd.forEach(d => { os[d.namaOpd] = (os[d.namaOpd] || 0) + 1; });
+    const se = Object.entries(os).sort((a, b) => b[1] - a[1]);
+    let tr = fd.map((d, i) => `<tr><td style="text-align:center;">${i+1}</td><td>${formatTanggal(d.tanggal)}</td><td>${d.namaOpd}</td><td>${formatNip(d.nip)}</td><td>${d.fileName||'-'}</td><td style="text-align:center;">${d.status}</td><td>${d.keterangan||'-'}</td></tr>`).join('');
+    let sr = se.map(([n, c]) => `<tr><td>${n}</td><td style="text-align:right;font-weight:bold;">${c}</td></tr>`).join('');
+    const ph = `<!DOCTYPE html><html><head><title>Rekap SIMONDOC</title><style>body{font-family:sans-serif;margin:20px;color:#1e293b;}h2{text-align:center;}table{width:100%;border-collapse:collapse;margin-bottom:30px;font-size:12px;}th,td{border:1px solid #cbd5e1;padding:8px;}th{background:#f1f5f9;}.summary-table{width:50%;margin:auto;}</style></head><body><h2>Rekapitulasi Dokumen OPD</h2><p style="text-align:center;color:#64748b;">${pt} | Total: ${fd.length}</p><table><thead><tr><th>No</th><th>Tanggal</th><th>OPD</th><th>NIP</th><th>File</th><th>Status</th><th>Keterangan</th></tr></thead><tbody>${tr}</tbody></table><hr><h3 style="text-align:center;">Rekap Per OPD</h3><table class="summary-table"><thead><tr><th>OPD</th><th style="text-align:right;">Jumlah</th></tr></thead><tbody>${sr}</tbody></table><p style="text-align:right;margin-top:50px;font-size:13px;">Dicetak: ${new Date().toLocaleDateString('id-ID',{weekday:'long',year:'numeric',month:'long',day:'numeric'})}</p><script>window.onload=()=>window.print();<\/script></body></html>`;
+    window.open('', '_blank').document.write(ph);
+}
 
 // MODAL & TOAST & LOADING
-function showModal(c) { document.getElementById('modalContent').innerHTML=c; document.getElementById('modalOverlay').classList.add('show'); document.body.style.overflow='hidden'; }
-function closeModal(e) { if(e&&e.target!==document.getElementById('modalOverlay'))return; document.getElementById('modalOverlay').classList.remove('show'); document.body.style.overflow=''; }
-function showToast(m, t='success') { const c=document.getElementById('toast-container'); const tE=document.createElement('div');tE.className=`toast toast-${t}`; const ic=t==='success'?'fa-circle-check':t==='error'?'fa-circle-xmark':'fa-triangle-exclamation'; tE.innerHTML=`<i class="fa-solid ${ic} text-lg flex-shrink-0"></i><span class="flex-1">${m}</span><button onclick="this.parentElement.remove()" class="flex-shrink-0 opacity-60 hover:opacity-100"><i class="fa-solid fa-xmark"></i></button>`; c.appendChild(tE); setTimeout(()=>{tE.classList.add('animate-toast-out');setTimeout(()=>tE.remove(),300);},4000); }
-function showLoading(t) { document.getElementById('loadingText').textContent=t; document.getElementById('loadingOverlay').classList.add('show'); }
+function showModal(c) { document.getElementById('modalContent').innerHTML = c; document.getElementById('modalOverlay').classList.add('show'); document.body.style.overflow = 'hidden'; }
+function closeModal(e) { if (e && e.target !== document.getElementById('modalOverlay')) return; document.getElementById('modalOverlay').classList.remove('show'); document.body.style.overflow = ''; }
+function showToast(m, t = 'success') { const c = document.getElementById('toast-container'); const tE = document.createElement('div'); tE.className = 'toast toast-' + t; const ic = t === 'success' ? 'fa-circle-check' : t === 'error' ? 'fa-circle-xmark' : 'fa-triangle-exclamation'; tE.innerHTML = '<i class="fa-solid ' + ic + ' text-lg flex-shrink-0"></i><span class="flex-1">' + m + '</span><button onclick="this.parentElement.remove()" class="flex-shrink-0 opacity-60 hover:opacity-100"><i class="fa-solid fa-xmark"></i></button>'; c.appendChild(tE); setTimeout(() => { tE.classList.add('animate-toast-out'); setTimeout(() => tE.remove(), 300); }, 4000); }
+function showLoading(t) { document.getElementById('loadingText').textContent = t; document.getElementById('loadingOverlay').classList.add('show'); }
 function hideLoading() { document.getElementById('loadingOverlay').classList.remove('show'); }
 
 // UTILS
-function getFileCategory(e) { if(['.pdf'].includes(e))return'pdf';if(['.xlsx','.xls'].includes(e))return'excel';if(['.jpg','.jpeg','.png'].includes(e))return'image';return'unknown'; }
-function formatFileSize(b) { if(b===0)return'0 B';const k=1024;const s=['B','KB','MB','GB'];const i=Math.floor(Math.log(b)/Math.log(k));return parseFloat((b/Math.pow(k,i)).toFixed(1))+' '+s[i]; }
-function formatTanggal(i) { if(!i)return'-';const d=new Date(i);return isNaN(d)?'-':d.toLocaleDateString('id-ID',{day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'}); }
-function formatNip(n) { if(!n||n.length<18)return n||'-'; return n.slice(0,8)+' '+n.slice(8,14)+' '+n.slice(14,15)+' '+n.slice(15,17)+' '+n.slice(17); }
-function formatDateID(d) { if(!d)return'-';return new Date(d+'T00:00:00').toLocaleDateString('id-ID',{day:'numeric',month:'long',year:'numeric'}); }
-function hashStr(s) { let h=0;for(let i=0;i<s.length;i++){h=((h<<5)-h)+s.charCodeAt(i);h|=0;}return h; }
-function animateCounter(id,t) { const e=document.getElementById(id);const c=parseInt(e.textContent)||0;if(c===t){e.textContent=t;return;}const d=600;const s=performance.now();function tick(n){const p=Math.min((n-s)/d,1);e.textContent=Math.round(c+(t-c)*(1-Math.pow(1-p,3)));if(p<1)requestAnimationFrame(tick);}requestAnimationFrame(tick); }
+function getFileCategory(e) { if (['.pdf'].includes(e)) return 'pdf'; if (['.xlsx', '.xls'].includes(e)) return 'excel'; if (['.jpg', '.jpeg', '.png'].includes(e)) return 'image'; return 'unknown'; }
+function formatFileSize(b) { if (b === 0) return '0 B'; const k = 1024; const s = ['B', 'KB', 'MB', 'GB']; const i = Math.floor(Math.log(b) / Math.log(k)); return parseFloat((b / Math.pow(k, i)).toFixed(1)) + ' ' + s[i]; }
+function formatTanggal(i) { if (!i) return '-'; const d = new Date(i); return isNaN(d) ? '-' : d.toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }); }
+function formatNip(n) { if (!n || n.length < 18) return n || '-'; return n.slice(0,8) + ' ' + n.slice(8,14) + ' ' + n.slice(14,15) + ' ' + n.slice(15,17) + ' ' + n.slice(17); }
+function formatDateID(d) { if (!d) return '-'; return new Date(d + 'T00:00:00').toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }); }
+function hashStr(s) { let h = 0; for (let i = 0; i < s.length; i++) { h = ((h << 5) - h) + s.charCodeAt(i); h |= 0; } return h; }
+function animateCounter(id, t) { const e = document.getElementById(id); const c = parseInt(e.textContent) || 0; if (c === t) { e.textContent = t; return; } const d = 600; const s = performance.now(); function tick(n) { const p = Math.min((n - s) / d, 1); e.textContent = Math.round(c + (t - c) * (1 - Math.pow(1 - p, 3))); if (p < 1) requestAnimationFrame(tick); } requestAnimationFrame(tick); }
 </script>
 </body>
 </html>
